@@ -2,77 +2,802 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>RonaldBible</title>
 <meta name="description" content="Read Scripture, topical studies, cross-references, Bible dictionary, prayer journal, and commentaries with RonaldBible.">
 <meta property="og:title" content="RonaldBible">
 <meta property="og:description" content="Read Scripture, topical studies, cross-references, Bible dictionary, prayer journal, and commentaries with RonaldBible.">
 <style>
-  body { font-family: Georgia, 'Times New Roman', serif; max-width: 760px; margin: 0 auto; padding: 20px 16px 60px; line-height: 1.65; color: #222; background: #faf9f6; }
-  h1 { font-size: 1.6em; text-align: center; margin-bottom: 4px; }
-  .subtitle { text-align: center; color: #666; font-style: italic; margin-top: 0; }
-  .nav { background: #fff; border: 1px solid #d8d4cc; border-radius: 10px; padding: 12px 14px; margin: 16px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
-  .nav select { font-family: Georgia, serif; font-size: 1em; padding: 8px; border: 1px solid #2c5f2d; border-radius: 8px; background: #fff; max-width: 45%; }
-  .nav button { font-family: Arial, sans-serif; font-size: 0.9em; padding: 8px 14px; border: none; border-radius: 8px; background: #2c5f2d; color: #fff; cursor: pointer; }
-  .nav button:disabled { background: #b9c4b9; cursor: default; }
-  .commentary-banner { background: #1a5276; color: #fff; border-radius: 10px; padding: 12px 16px; margin: 14px 0; text-align: center; }
-  details { background: #fff; border: 1px solid #d8d4cc; border-radius: 10px; margin: 14px 0; overflow: hidden; }
-  details[open] { border: 2px solid #2c5f2d; }
-  summary { cursor: pointer; padding: 14px 16px; list-style: none; }
-  summary::-webkit-details-marker { display: none; }
-  summary .ref-line { display: flex; align-items: center; gap: 8px; }
-  summary .badge { background: #2c5f2d; color: #fff; font-family: Arial, sans-serif; font-size: 0.72em; font-weight: bold; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
-  summary .verse-text { display: block; font-style: italic; margin-top: 8px; color: #333; }
-  summary .tap-hint { display: block; font-family: Arial, sans-serif; font-size: 0.72em; color: #1a5276; margin-top: 8px; }
-  details[open] summary .tap-hint { display: none; }
-  .explain { padding: 0 16px 16px; border-top: 1px solid #e4e0d8; margin-top: 0; padding-top: 14px; }
-  .nkjv-link { display: inline-block; font-family: Arial, sans-serif; font-size: 0.82em; background: #1a5276; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; margin-bottom: 12px; }
-  .pending-note { color: #666; font-size: 0.9em; }
-  .writing-note { color: #1a5276; font-size: 0.9em; font-style: italic; }
-  .verse-commentary { margin-top: 6px; }
-  .verse-commentary .label { font-weight: bold; color: #2c5f2d; }
-  .verse-commentary a.ref, .chapter-overview a.ref, .chapter-trailing a.ref { color: #1a5276; text-decoration: none; border-bottom: 1px dotted #1a5276; white-space: nowrap; }
-  .verse-commentary a.ref:hover, .chapter-overview a.ref:hover, .chapter-trailing a.ref:hover { border-bottom: solid; }
-  .note { background: #fdeeee; border-left: 4px solid #a94442; padding: 10px 14px; font-size: 0.92em; margin: 18px 0; }
-  #loading { text-align: center; padding: 60px 0; color: #2c5f2d; font-style: italic; }
-  .progress-line { text-align: center; color: #555; font-size: 0.9em; margin: 6px 0 0; }
-  a { word-wrap: break-word; }
-  .chapter-overview { background: #fff; border: 1px solid #d8d4cc; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
-  .chapter-overview h3, .chapter-trailing h2, .chapter-trailing h3 { color: #2c5f2d; }
-  .chapter-overview .overview { background: #eef4ea; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
-  .chapter-overview .structure { background: #f6f6f2; border: 1px solid #ccc; border-radius: 8px; padding: 10px 16px; margin: 12px 0; }
-  .chapter-overview blockquote, .chapter-trailing blockquote { border-left: 4px solid #2c5f2d; background: #eef4ea; margin: 12px 0; padding: 12px 16px; font-style: italic; }
-  .chapter-trailing { background: #fff; border: 1px solid #d8d4cc; border-radius: 10px; padding: 14px 18px; margin: 20px 0; }
-  .chapter-trailing .summary { background: #fdf6e3; border: 2px solid #bfa76a; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  :root {
+    --bg: #f7f6f1;
+    --card: #ffffff;
+    --card-subtle: #fbfaf6;
+    --ink: #16221a;
+    --muted: #5e6d63;
+    --muted-light: #87978d;
+    --green: #156641;
+    --green-dark: #0d462c;
+    --green-light: #eaf4ed;
+    --green-hover: #1b7a50;
+    --gold: #b8861d;
+    --gold-soft: #fcf6e8;
+    --gold-border: #edd8a3;
+    --line: #e3ded4;
+    --line-subtle: #ece8df;
+    --blue: #1c526d;
+    --blue-soft: #eaf2f6;
+    --highlight: #fef3c7;
+    --highlight-dark: #3b2f0c;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 22px;
+    --shadow-sm: 0 1px 3px rgba(22, 34, 26, 0.04);
+    --shadow-md: 0 4px 16px rgba(22, 34, 26, 0.06);
+    --shadow-lg: 0 8px 28px rgba(22, 34, 26, 0.09);
+    --bible-font: 18px;
+  }
 
-  :root{--bg:#f5f7f2;--card:#fff;--ink:#17231c;--muted:#65736a;--green:#176b45;--green2:#0f5135;--gold:#c89b3c;--line:#dce5dc;--soft:#eaf3ec;--blue:#245b70}
-  *{box-sizing:border-box} body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:900px;background:var(--bg);color:var(--ink);line-height:1.65;padding:18px 14px 90px;transition:background .2s,color .2s}
-  h1{font-family:Georgia,serif;font-size:clamp(1.7rem,6vw,2.35rem);letter-spacing:-.04em;margin-top:10px;color:var(--green2)} .subtitle{font-style:normal;color:var(--muted);max-width:540px;margin:0 auto 18px}
-  .brand-mark{width:48px;height:48px;border-radius:17px;background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;display:grid;place-items:center;font-size:25px;margin:0 auto 8px;box-shadow:0 8px 20px #176b4528}
-  .dashboard{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin:18px 0}.hero-card,.mini-card,.tools,.nav,.chapter-overview,.chapter-trailing{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 4px 16px #17231c08}
-  .hero-card{padding:18px;background:linear-gradient(135deg,#174d36,#28774e);color:white;position:relative;overflow:hidden}.hero-card .eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.8}.hero-card .daily-text{font:italic 1.08rem/1.55 Georgia,serif;margin:10px 0}.hero-card .daily-ref{font-weight:700;color:#f5d58b}.hero-card button{background:#f6d88f;color:#263c2e;border:0;border-radius:10px;padding:10px 14px;font-weight:700;margin-top:10px;cursor:pointer}
-  .mini-stack{display:grid;gap:12px}.mini-card{padding:14px;display:flex;flex-direction:column;justify-content:center}.mini-card strong{font-size:1.2rem;color:var(--green)}.mini-card span{font-size:.82rem;color:var(--muted)}
-  .tools{padding:12px;margin:14px 0;display:grid;gap:10px}.search-row{display:flex;gap:8px}.search-row input{flex:1;min-width:0}.tools input,.tools select,.tools textarea,#utilityPanel input:not([type=checkbox]),#utilityPanel textarea{font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--bg);color:var(--ink);width:100%}.tool-buttons{display:flex;flex-wrap:wrap;gap:8px}.tool-buttons button,.action-btn,.nav button{border:0;border-radius:10px;background:var(--green);color:white;padding:9px 12px;font:600 .86rem system-ui;cursor:pointer}.tool-buttons button.secondary,.action-btn.secondary{background:var(--soft);color:var(--green2);border:1px solid var(--line)}
-  .nav{justify-content:space-between;padding:10px;gap:7px}.nav select{font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:9px;max-width:34%;flex:1;min-width:0}.nav button{padding:9px 11px}.progress-line{font-size:.82rem;color:var(--muted);text-align:left;margin:8px 2px 14px}
-  details.vblock{background:var(--card);border:1px solid var(--line);border-radius:15px;margin:10px 0;box-shadow:0 2px 8px #17231c05}details[open].vblock{border:1px solid #73a889;box-shadow:0 5px 18px #176b4510}summary{padding:15px 14px}summary .badge{background:var(--soft);color:var(--green2);border-radius:8px;font-size:.76rem;padding:5px 8px}summary .verse-text{font-style:normal;font-family:Georgia,serif;font-size:1.06rem;line-height:1.7;color:var(--ink);margin-top:10px}summary .tap-hint{color:var(--green);font-size:.75rem}.explain{padding:14px;border-top:1px solid var(--line)}.verse-actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}.action-btn{font-size:.78rem;padding:7px 10px}.vblock.is-highlighted summary{background:#fff4cc}.nkjv-link{border-radius:9px}.commentary-banner{border-radius:13px;background:var(--blue)}.note{border:0;border-radius:12px;background:#edf5ef;color:#3e5a48;padding:12px 14px}.chapter-overview,.chapter-trailing{padding:16px}.chapter-overview h3,.chapter-trailing h2,.chapter-trailing h3{color:var(--green)}.chapter-overview .overview,.chapter-overview blockquote,.chapter-trailing blockquote{background:var(--soft);border-radius:12px;border-left-color:var(--green)}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}.panel h2{font-size:1.1rem;margin:0 0 10px}.result-item,.saved-item{padding:11px 0;border-bottom:1px solid var(--line)}.result-item:last-child,.saved-item:last-child{border-bottom:0}.result-item button,.saved-item button{margin:5px 5px 0 0}.muted{color:var(--muted);font-size:.86rem}.empty-state{padding:22px;text-align:center;color:var(--muted)}.hidden{display:none!important}
-  body.dark{--bg:#101813;--card:#18231c;--ink:#e8f0e9;--muted:#a5b4a8;--green:#78c69a;--green2:#9bd9b2;--line:#2d4033;--soft:#21372a;--blue:#214b5b}body.dark .hero-card{background:linear-gradient(135deg,#123b29,#1c5b3a)}body.dark .vblock.is-highlighted summary{background:#4a3b16}body.dark .note{background:#21372a;color:#d1e5d6}
-  @media(max-width:560px){body{padding:12px 10px 70px}.dashboard{grid-template-columns:1fr}.mini-stack{grid-template-columns:1fr 1fr}.hero-card{padding:16px}.nav{flex-wrap:wrap}.nav select{max-width:none}.nav button{flex:1}.search-row{flex-wrap:wrap}.search-row input{flex-basis:100%}}
+  body.dark {
+    --bg: #0c1410;
+    --card: #141f19;
+    --card-subtle: #192720;
+    --ink: #ebf3ec;
+    --muted: #95a69a;
+    --muted-light: #63776a;
+    --green: #38b277;
+    --green-dark: #4ade80;
+    --green-light: #1b2f24;
+    --green-hover: #48c488;
+    --gold: #dfb142;
+    --gold-soft: #2d2410;
+    --gold-border: #524016;
+    --line: #223328;
+    --line-subtle: #1b2921;
+    --blue: #4aa3c7;
+    --blue-soft: #162c36;
+    --highlight: #45340f;
+    --highlight-dark: #45340f;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.55);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    transition: background 0.25s ease, color 0.25s ease;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 12px));
+    overflow-x: hidden;
+  }
+
+  .app-container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 16px 20px;
+  }
+
+  /* Top App Bar */
+  .top-app-bar {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: rgba(247, 246, 241, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  body.dark .top-app-bar {
+    background: rgba(12, 20, 16, 0.88);
+  }
+  .top-bar-inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  .brand-glyph {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, var(--green-dark), var(--green));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(21, 102, 65, 0.22);
+  }
+  .brand-text h1 {
+    font-family: "Georgia", "Times New Roman", serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--green-dark);
+    line-height: 1.15;
+  }
+  body.dark .brand-text h1 {
+    color: var(--green);
+  }
+  .brand-text p {
+    font-size: 0.73rem;
+    color: var(--muted);
+    font-weight: 500;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .top-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .icon-btn:hover {
+    background: var(--card);
+    border-color: var(--line);
+  }
+  .icon-btn:active {
+    transform: scale(0.95);
+  }
+  .icon-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* Tab View Controller */
+  .tab-view {
+    display: none;
+    animation: fadeInView 0.22s ease-out forwards;
+  }
+  .tab-view.active {
+    display: block;
+  }
+  @keyframes fadeInView {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hero Daily Verse Card */
+  .hero-card {
+    margin-top: 16px;
+    padding: 22px 20px;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, #11422d 0%, #176541 60%, #1e7a4f 100%);
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(17, 66, 45, 0.18);
+  }
+  .hero-card::after {
+    content: "“";
+    position: absolute;
+    right: 18px;
+    bottom: -24px;
+    font-family: Georgia, serif;
+    font-size: 130px;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #ebd39b;
+    margin-bottom: 8px;
+  }
+  .hero-verse-text {
+    font-family: Georgia, "Cambria", serif;
+    font-style: italic;
+    font-size: clamp(1.08rem, 2.5vw, 1.25rem);
+    line-height: 1.6;
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  }
+  .hero-ref {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f7dfa3;
+    margin-bottom: 16px;
+  }
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-btn-primary {
+    background: #f4d38c;
+    color: #1a3325;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hero-btn-primary:active { transform: scale(0.97); }
+  .hero-btn-secondary {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: background 0.15s, transform 0.1s;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hero-btn-secondary:hover { background: rgba(255, 255, 255, 0.26); }
+  .hero-btn-secondary:active { transform: scale(0.97); }
+
+  /* Stats Row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 14px 0 16px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--green);
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  /* Chapter Navigation Bar */
+  .chapter-nav-bar {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 8px 10px;
+    margin: 16px 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 60px;
+    z-index: 800;
+  }
+  .nav-arrow-btn {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: none;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: background 0.15s ease, opacity 0.15s ease;
+  }
+  body.dark .nav-arrow-btn {
+    background: var(--green-light);
+    color: var(--green);
+  }
+  .nav-arrow-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+    background: var(--line-subtle);
+    color: var(--muted);
+  }
+  .select-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+  }
+  .select-group select {
+    font-family: inherit;
+    font-size: 0.94rem;
+    font-weight: 600;
+    padding: 10px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card-subtle);
+    color: var(--ink);
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    cursor: pointer;
+    outline: none;
+  }
+  .select-group select:focus {
+    border-color: var(--green);
+  }
+
+  .progress-info {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 4px 4px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Commentary Banner & Notes */
+  .commentary-banner {
+    background: var(--blue-soft);
+    color: var(--blue);
+    border: 1px solid rgba(28, 82, 109, 0.2);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-size: 0.88rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .chapter-note {
+    background: var(--green-light);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin: 12px 0 16px;
+    font-size: 0.88rem;
+    color: var(--green-dark);
+  }
+  body.dark .chapter-note {
+    color: #bbf7d0;
+  }
+
+  /* Verse Blocks */
+  .vblock {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.18s, box-shadow 0.18s, transform 0.1s;
+    overflow: hidden;
+  }
+  .vblock[open] {
+    border-color: var(--green);
+    box-shadow: 0 4px 18px rgba(21, 102, 65, 0.08);
+  }
+  .vblock.is-highlighted summary {
+    background: var(--highlight);
+  }
+  summary {
+    cursor: pointer;
+    padding: 14px 16px;
+    list-style: none;
+    display: block;
+    user-select: text;
+  }
+  summary::-webkit-details-marker { display: none; }
+  .summary-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .verse-badge {
+    display: inline-flex;
+    align-items: center;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  body.dark .verse-badge {
+    color: var(--green);
+  }
+  .tap-prompt {
+    font-size: 0.74rem;
+    color: var(--green);
+    font-weight: 600;
+  }
+  .vblock[open] .tap-prompt { display: none; }
+  .verse-text {
+    font-family: Georgia, "Cambria", "Times New Roman", serif;
+    font-size: var(--bible-font);
+    line-height: 1.74;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .verse-detail-pane {
+    padding: 14px 16px 16px;
+    border-top: 1px solid var(--line-subtle);
+    background: var(--card-subtle);
+  }
+  .verse-actions-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .action-btn {
+    border: none;
+    border-radius: 9px;
+    background: var(--green);
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .action-btn:active { transform: scale(0.97); }
+  .action-btn.secondary {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .nkjv-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--blue-soft);
+    color: var(--blue);
+    text-decoration: none;
+    padding: 7px 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  .verse-commentary {
+    margin-top: 8px;
+    font-size: 0.94rem;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .verse-commentary .label {
+    font-weight: 700;
+    color: var(--green);
+  }
+  .verse-commentary a.ref, .chapter-overview a.ref, .chapter-trailing a.ref {
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--blue);
+    font-weight: 600;
+  }
+
+  .chapter-overview, .chapter-trailing {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    margin: 16px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .chapter-overview h3, .chapter-trailing h2, .chapter-trailing h3 {
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+  .chapter-overview .overview, .chapter-trailing .summary {
+    background: var(--green-light);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 10px 0;
+  }
+
+  /* Cards, Forms & Panels */
+  .panel-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .panel-card h2 {
+    font-family: Georgia, serif;
+    font-size: 1.35rem;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+  }
+  body.dark .panel-card h2 { color: var(--green); }
+  .panel-subtitle {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .form-control {
+    width: 100%;
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card-subtle);
+    color: var(--ink);
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    min-height: 44px;
+  }
+  .form-control:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(21, 102, 65, 0.12);
+  }
+  label.form-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 12px 0 6px;
+  }
+
+  /* Search View UI */
+  .search-hero {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 18px 16px;
+    margin-top: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .search-bar-wrap {
+    display: flex;
+    gap: 8px;
+  }
+  .search-input {
+    flex: 1;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+  .quick-chips-wrap {
+    margin-top: 14px;
+  }
+  .quick-chips-title {
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .chip-scroller {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .search-chip {
+    background: var(--card-subtle);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 7px 12px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .search-chip:hover {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--green-dark);
+  }
+  body.dark .search-chip:hover { color: var(--green); }
+
+  /* Segmented Controls for Sub-tabs */
+  .segmented-bar {
+    display: flex;
+    background: var(--card-subtle);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .segmented-bar::-webkit-scrollbar { display: none; }
+  .segmented-btn {
+    flex: 1;
+    min-width: fit-content;
+    padding: 9px 14px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.84rem;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 40px;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+  }
+  .segmented-btn.active {
+    background: var(--card);
+    color: var(--green);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  /* List Items & Cards */
+  .item-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  .item-card strong {
+    font-family: Georgia, serif;
+    font-size: 1.05rem;
+    color: var(--green-dark);
+    display: block;
+    margin-bottom: 4px;
+  }
+  body.dark .item-card strong { color: var(--green); }
+  .item-card p {
+    font-size: 0.92rem;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .empty-state {
+    padding: 36px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.94rem;
+  }
+
+  /* Fixed Bottom Tab Bar */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px calc(env(safe-area-inset-bottom, 0px) + 2px);
+    z-index: 1000;
+    box-shadow: 0 -4px 24px rgba(17, 35, 25, 0.05);
+    transition: background 0.25s, border-color 0.25s;
+  }
+  body.dark .bottom-nav {
+    background: rgba(18, 29, 23, 0.94);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.4);
+  }
+  .nav-tab {
+    flex: 1;
+    max-width: 80px;
+    height: 52px;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 12px;
+    transition: color 0.15s ease, transform 0.12s ease;
+    padding: 4px;
+  }
+  .nav-tab:active { transform: scale(0.92); }
+  .nav-tab.active {
+    color: var(--green);
+  }
+  .tab-icon {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+  .nav-tab.active .tab-icon {
+    stroke-width: 2.3;
+  }
+  .tab-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1;
+  }
 
   /* Toast Notification */
   .rb-toast {
     position: fixed;
-    bottom: 24px;
+    bottom: calc(76px + env(safe-area-inset-bottom, 12px));
     left: 50%;
     transform: translateX(-50%) translateY(20px);
-    background: #176b45;
+    background: #156641;
     color: #fff;
-    padding: 12px 20px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    padding: 12px 22px;
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
     z-index: 99999;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: 600;
     max-width: 90%;
     text-align: center;
     transition: opacity 0.25s ease, transform 0.25s ease;
@@ -87,37 +812,213 @@
   .rb-toast.error {
     background: #991b1b;
   }
+
+  #loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--green);
+    font-style: italic;
+    font-size: 1.05rem;
+  }
 </style>
 </head>
 <body>
 
-<div class="brand-mark" aria-hidden="true">✝</div>
-<h1>RonaldBible</h1>
-<p class="subtitle">Read Scripture. Understand the Word. Grow every day.</p>
-<div class="dashboard" id="dashboard">
-  <section class="hero-card"><div class="eyebrow">✦ Verse for today</div><div class="daily-text" id="dailyText">Loading your daily verse…</div><div class="daily-ref" id="dailyRef"></div><button onclick="openDailyVerse()">Read this passage →</button></section>
-  <div class="mini-stack"><section class="mini-card"><strong id="savedCount">0</strong><span>Saved verses</span></section><section class="mini-card"><strong id="readCount">0</strong><span>Chapters visited</span></section><section class="mini-card"><strong id="streakCount">0 days</strong><span>Reading streak</span></section></div>
-</div>
-<section class="tools" aria-label="Bible tools">
- <div class="search-row"><input id="searchInput" placeholder="Search the Bible by word or phrase…" aria-label="Search Bible"><button class="action-btn" onclick="searchBible()">Search</button></div>
- <div class="tool-buttons"><button onclick="showLibrary('bookmarks')">🔖 Bookmarks</button><button class="secondary" onclick="showLibrary('notes')">📝 My notes</button><button class="secondary" onclick="showLibrary('highlights')">✨ Highlights</button><button class="secondary" onclick="showPlans()">📖 Reading plans</button><button class="secondary" onclick="showTopics()">🧭 Topical studies</button><button class="secondary" onclick="showCrossReferences()">🔗 Cross-references</button><button class="secondary" onclick="showBibleDictionary()">📚 Bible dictionary</button><button class="secondary" onclick="showStudyGuide()">🧠 Study guide</button><button class="secondary" onclick="showPrayerJournal()">🙏 Prayer journal</button><button class="secondary" onclick="readCurrentChapter()">🔊 Read aloud</button><button class="secondary" onclick="showBackup()">💾 Backup & restore</button><button class="secondary" onclick="toggleTheme()" id="themeBtn">🌙 Dark mode</button></div>
- <div class="search-row"><label for="fontSize" class="muted" style="align-self:center;white-space:nowrap">Text size</label><input id="fontSize" type="range" min="16" max="26" value="18" oninput="setFontSize(this.value)" aria-label="Bible text size"></div>
-</section>
-<div id="utilityPanel" class="panel hidden"></div>
-<div id="searchResults" class="panel hidden"></div>
+<!-- Top App Bar -->
+<header class="top-app-bar">
+  <div class="top-bar-inner">
+    <div class="brand-lockup" onclick="switchTab('read')">
+      <div class="brand-glyph" aria-hidden="true">✝</div>
+      <div class="brand-text">
+        <h1>RonaldBible</h1>
+        <p>Holy Scripture & Study</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="toggleTheme()" id="themeBtnTop" title="Toggle theme" aria-label="Toggle dark/light mode">
+        <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      </button>
+      <button class="icon-btn" onclick="switchTab('search')" title="Search Bible" aria-label="Search Bible">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </button>
+    </div>
+  </div>
+</header>
 
-<div id="loading">Loading the whole Bible&hellip;</div>
+<main class="app-container">
 
-<div class="nav" id="nav" style="display:none">
-  <button id="prevBtn" onclick="nav(-1)">&#8592; Prev</button>
-  <select id="bookSel" onchange="onBookChange()"></select>
-  <select id="chapSel" onchange="onChapChange()"></select>
-  <button id="nextBtn" onclick="nav(1)">Next &#8594;</button>
-</div>
-<p class="progress-line" id="progressLine"></p>
-<div id="content"></div>
+  <!-- ==================== TAB 1: READ ==================== -->
+  <section id="viewRead" class="tab-view active">
+    <!-- Hero Daily Verse -->
+    <div class="hero-card" id="heroCard">
+      <div class="hero-eyebrow">✦ Verse for today</div>
+      <div class="hero-verse-text" id="dailyText">Loading your daily verse…</div>
+      <div class="hero-ref" id="dailyRef"></div>
+      <div class="hero-actions">
+        <button class="hero-btn-primary" onclick="openDailyVerse()">Read this passage →</button>
+        <button class="hero-btn-secondary" onclick="shareDailyVerse()">📤 Share verse</button>
+      </div>
+    </div>
 
+    <!-- Reading Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-value" id="savedCount">0</span>
+        <span class="stat-label">Bookmarks</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="readCount">0</span>
+        <span class="stat-label">Chapters</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="streakCount">0 d</span>
+        <span class="stat-label">Streak</span>
+      </div>
+    </div>
+
+    <!-- Chapter Navigation -->
+    <div class="chapter-nav-bar" id="chapterNav" style="display:none">
+      <button class="nav-arrow-btn" id="prevBtn" onclick="nav(-1)">&#8592; Prev</button>
+      <div class="select-group">
+        <select id="bookSel" onchange="onBookChange()" aria-label="Select Bible Book"></select>
+        <select id="chapSel" onchange="onChapChange()" aria-label="Select Chapter"></select>
+      </div>
+      <button class="nav-arrow-btn" id="nextBtn" onclick="nav(1)">Next &#8594;</button>
+    </div>
+
+    <div class="progress-info" id="progressLine"></div>
+
+    <div id="loading">Loading the whole Bible&hellip;</div>
+    <div id="content"></div>
+  </section>
+
+  <!-- ==================== TAB 2: SEARCH ==================== -->
+  <section id="viewSearch" class="tab-view">
+    <div class="search-hero">
+      <div class="search-bar-wrap">
+        <input id="searchInput" class="form-control search-input" placeholder="Search word, phrase, or book…" aria-label="Search Bible" onkeydown="if(event.key==='Enter')searchBible()">
+        <button class="action-btn" onclick="searchBible()">Search</button>
+      </div>
+      <div class="quick-chips-wrap">
+        <div class="quick-chips-title">Quick Topics & Passages</div>
+        <div class="chip-scroller">
+          <button class="search-chip" onclick="quickSearch('Faith')">Faith</button>
+          <button class="search-chip" onclick="quickSearch('Love')">Love</button>
+          <button class="search-chip" onclick="quickSearch('Peace')">Peace</button>
+          <button class="search-chip" onclick="quickSearch('Prayer')">Prayer</button>
+          <button class="search-chip" onclick="quickSearch('Hope')">Hope</button>
+          <button class="search-chip" onclick="goToVerse('John',3,16)">John 3:16</button>
+          <button class="search-chip" onclick="goToVerse('Psalms',23,1)">Psalm 23</button>
+          <button class="search-chip" onclick="goToVerse('Romans',8,28)">Romans 8:28</button>
+          <button class="search-chip" onclick="goToVerse('Proverbs',3,5)">Proverbs 3:5</button>
+        </div>
+      </div>
+    </div>
+    <div id="searchResults" style="margin-top:16px"></div>
+  </section>
+
+  <!-- ==================== TAB 3: STUDY ==================== -->
+  <section id="viewStudy" class="tab-view">
+    <div class="segmented-bar">
+      <button class="segmented-btn active" id="studyTab-topics" onclick="setStudySubTab('topics')">🧭 Topics</button>
+      <button class="segmented-btn" id="studyTab-xrefs" onclick="setStudySubTab('xrefs')">🔗 Cross-Refs</button>
+      <button class="segmented-btn" id="studyTab-dict" onclick="setStudySubTab('dict')">📚 Dictionary</button>
+      <button class="segmented-btn" id="studyTab-guide" onclick="setStudySubTab('guide')">🧠 Guided Study</button>
+    </div>
+    <div id="studyContentPane"></div>
+  </section>
+
+  <!-- ==================== TAB 4: LIBRARY ==================== -->
+  <section id="viewLibrary" class="tab-view">
+    <div class="segmented-bar">
+      <button class="segmented-btn active" id="libTab-bookmarks" onclick="setLibSubTab('bookmarks')">🔖 Bookmarks</button>
+      <button class="segmented-btn" id="libTab-notes" onclick="setLibSubTab('notes')">📝 Notes</button>
+      <button class="segmented-btn" id="libTab-highlights" onclick="setLibSubTab('highlights')">✨ Highlights</button>
+      <button class="segmented-btn" id="libTab-prayers" onclick="setLibSubTab('prayers')">🙏 Prayers</button>
+      <button class="segmented-btn" id="libTab-plans" onclick="setLibSubTab('plans')">📖 Plans</button>
+    </div>
+    <div id="libraryContentPane"></div>
+  </section>
+
+  <!-- ==================== TAB 5: SETTINGS ==================== -->
+  <section id="viewSettings" class="tab-view">
+    <div class="panel-card">
+      <h2>Preferences & Display</h2>
+      <p class="panel-subtitle">Personalize your reading experience and typography</p>
+      
+      <label class="form-label" for="fontSize">Scripture Text Size</label>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <span style="font-size:0.85rem;color:var(--muted)">A</span>
+        <input id="fontSize" type="range" min="16" max="28" value="18" style="flex:1" oninput="setFontSize(this.value)">
+        <span style="font-size:1.25rem;color:var(--muted);font-weight:bold">A</span>
+      </div>
+      <div style="padding:12px 14px;border-radius:10px;background:var(--card-subtle);border:1px solid var(--line);margin-bottom:16px">
+        <p style="font-family:Georgia,serif;font-size:var(--bible-font);line-height:1.7" id="fontSizePreview">“Thy word is a lamp unto my feet, and a light unto my path.”</p>
+      </div>
+
+      <label class="form-label">Color Theme</label>
+      <div style="display:flex;gap:10px;margin-bottom:18px">
+        <button class="action-btn secondary" style="flex:1" onclick="applyTheme(false)">☀️ Light Mode</button>
+        <button class="action-btn secondary" style="flex:1" onclick="applyTheme(true)">🌙 Dark Mode</button>
+      </div>
+
+      <label class="form-label">Audio Bible</label>
+      <p class="panel-subtitle" style="margin-bottom:10px">Listen to the current chapter using speech synthesis</p>
+      <div style="display:flex;gap:10px">
+        <button class="action-btn" onclick="readCurrentChapter()">🔊 Listen to Chapter</button>
+        <button class="action-btn secondary" onclick="stopReadingAloud()">■ Stop Audio</button>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <h2>Backup & Portability</h2>
+      <p class="panel-subtitle">Safely export or restore all bookmarks, reflections, prayer records and study worksheets</p>
+      <div style="display:flex;gap:10px;margin-bottom:12px">
+        <button class="action-btn" onclick="generateBackup()">Generate Backup</button>
+        <button class="action-btn secondary" onclick="copyBackup()">Copy Backup JSON</button>
+      </div>
+      <textarea id="backupText" class="form-control" rows="5" placeholder="Your backup JSON code appears here, or paste a previous backup to restore..."></textarea>
+      <button class="action-btn secondary" style="width:100%" onclick="restoreBackup()">Restore Data From Pasted JSON</button>
+    </div>
+
+    <div class="panel-card">
+      <h2>About RonaldBible</h2>
+      <p class="panel-subtitle">Version 1.4 • King James Version Scripture with parallel references and historical study tools.</p>
+      <p style="font-size:0.86rem;color:var(--muted);line-height:1.6">Designed for personal reflection, daily growth, and deep biblical study. All personal bookmarks, notes, and worksheets remain securely on your local device.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- Unified Utility Modal/Drawer -->
+<div id="utilityPanel" class="app-container" style="display:none"></div>
+
+<!-- Toast Notice -->
 <div id="rb-toast" class="rb-toast" role="alert"></div>
+
+<!-- Mobile Bottom Navigation Bar -->
+<nav class="bottom-nav" id="bottomNav" aria-label="Main Navigation">
+  <button class="nav-tab active" onclick="switchTab('read')" id="tab-read" aria-label="Read Scripture">
+    <svg class="tab-icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+    <span class="tab-label">Read</span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('search')" id="tab-search" aria-label="Search Bible">
+    <svg class="tab-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    <span class="tab-label">Search</span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('study')" id="tab-study" aria-label="Study Tools">
+    <svg class="tab-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+    <span class="tab-label">Study</span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('library')" id="tab-library" aria-label="My Library">
+    <svg class="tab-icon" viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+    <span class="tab-label">Library</span>
+  </button>
+  <button class="nav-tab" onclick="switchTab('settings')" id="tab-settings" aria-label="Settings">
+    <svg class="tab-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    <span class="tab-label">Settings</span>
+  </button>
+</nav>
 
 <script src="/bible-data.js"></script>
 <script src="/preloaded-comm.js"></script>
@@ -132,8 +1033,11 @@ let books = [];
 let chapterStartOrder = [];
 let commentaryByOrder = {};
 let commentaryCount = 0;
+let currentTab = 'read';
+let currentStudySubTab = 'topics';
+let currentLibSubTab = 'bookmarks';
 
-// Non-blocking toast to replace window.alert in sandboxed iframes
+// Non-blocking toast
 function showToast(msg, isError = false) {
   const toast = document.getElementById('rb-toast');
   if (!toast) return;
@@ -154,8 +1058,38 @@ function esc(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function orderOf(bookIdx, chap) {
   return chapterStartOrder[bookIdx] + chap - 1;
+}
+
+// Tab Switching System
+function switchTab(tabId) {
+  currentTab = tabId;
+  document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  
+  const targetView = document.getElementById('view' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
+  const targetTab = document.getElementById('tab-' + tabId);
+  
+  if (targetView) targetView.classList.add('active');
+  if (targetTab) targetTab.classList.add('active');
+  
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (tabId === 'study') {
+    renderStudySubTab(currentStudySubTab);
+  } else if (tabId === 'library') {
+    renderLibSubTab(currentLibSubTab);
+  } else if (tabId === 'search') {
+    setTimeout(() => {
+      const input = document.getElementById('searchInput');
+      if (input && !input.value) input.focus();
+    }, 100);
+  }
 }
 
 async function init() {
@@ -210,7 +1144,6 @@ async function init() {
     bookSel.appendChild(opt);
   });
 
-  // Starting position: ?book=Name&chapter=N link wins, then saved place, then Genesis 1
   let bi = 0, ch = 1;
   const qs = new URLSearchParams(location.search);
   const qBook = qs.get("book");
@@ -227,7 +1160,7 @@ async function init() {
   }
 
   document.getElementById("loading").style.display = "none";
-  document.getElementById("nav").style.display = "flex";
+  document.getElementById("chapterNav").style.display = "flex";
   bookSel.value = bi;
   fillChapterSel(bi, ch);
   render(bi, ch);
@@ -394,17 +1327,12 @@ function render(bi, ch) {
 
   let html = "";
   if (hasComm) {
-    html += '<div class="commentary-banner">This chapter\'s full commentary is written &mdash; tap any verse to read its context and meaning right here</div>';
+    html += '<div class="commentary-banner"><span>📖</span><div><strong>Full Chapter Commentary Available</strong><br>Tap any verse to reveal historical context and deeper meaning instantly.</div></div>';
   }
   if (offlineMode) {
-    html += '<div class="commentary-banner" style="background:#8a6d3b">Offline &mdash; showing commentary saved on this device. New chapters and verse requests need a connection.</div>';
+    html += '<div class="commentary-banner" style="background:var(--gold-soft);color:var(--gold);border-color:var(--gold-border)"><span>⚡</span><div><strong>Offline Reading Active</strong><br>Showing commentary saved locally. New chapter requests require an internet connection.</div></div>';
   }
-  html += '<div class="note"><strong>' + esc(book.n) + ' ' + ch + '</strong> &mdash; King James Version. ' +
-    'Tap any verse: its context and meaning appear here. ' +
-    (hasComm
-      ? 'For this chapter they are already written and appear instantly.'
-      : 'If not written yet, they are written automatically, usually within a minute.') +
-    ' You can also read any verse in the NKJV.</div>';
+  html += '<div class="chapter-note"><strong>' + esc(book.n) + ' ' + ch + '</strong> • King James Version. Tap any verse to view reflection tools, study notes, and commentary.</div>';
 
   if (hasComm) {
     html += '<div class="chapter-overview" id="chov-' + order + '"></div>';
@@ -413,13 +1341,22 @@ function render(bi, ch) {
   for (let v = 1; v <= verses.length; v++) {
     const badge = esc(book.n).toUpperCase() + " " + ch + ":" + v;
     html += '<details class="vblock" data-book="' + esc(book.n) + '" data-ch="' + ch + '" data-v="' + v + '">' +
-      '<summary><span class="ref-line"><span class="badge">' + badge + '</span></span>' +
-      '<span class="verse-text">&ldquo;' + esc(verses[v - 1]) + '&rdquo;</span>' +
-      '<span class="tap-hint">&#9662; Tap for the context and meaning</span></summary>' +
-      '<div class="explain">' +
-      '<div class="verse-actions"><button class="action-btn" onclick="event.preventDefault();toggleBookmark(\'' + esc(book.n) + '\',' + ch + ',' + v + ',this)">🔖 Save</button><button class="action-btn secondary" onclick="event.preventDefault();toggleHighlight(this)">✨ Highlight</button><button class="action-btn secondary" onclick="event.preventDefault();editNote(\'' + esc(book.n) + '\',' + ch + ',' + v + ')">📝 Note</button></div>' +
-      '<a class="nkjv-link" href="' + gatewayUrl(book.n, ch, v) + '" target="_blank" rel="noopener">Read in NKJV &#8599;</a>' +
-      '<div class="verse-slot" id="vs-' + (order) + '-' + v + '"></div>' +
+      '<summary>' +
+        '<div class="summary-header">' +
+          '<span class="verse-badge">' + badge + '</span>' +
+          '<span class="tap-prompt">Tap to study ▾</span>' +
+        '</div>' +
+        '<div class="verse-text">&ldquo;' + esc(verses[v - 1]) + '&rdquo;</div>' +
+      '</summary>' +
+      '<div class="verse-detail-pane">' +
+        '<div class="verse-actions-bar">' +
+          '<button class="action-btn" onclick="event.preventDefault();toggleBookmark(\'' + esc(book.n) + '\',' + ch + ',' + v + ',this)">🔖 Save</button>' +
+          '<button class="action-btn secondary" onclick="event.preventDefault();toggleHighlight(this)">✨ Highlight</button>' +
+          '<button class="action-btn secondary" onclick="event.preventDefault();editNote(\'' + esc(book.n) + '\',' + ch + ',' + v + ')">📝 Note</button>' +
+          '<button class="action-btn secondary" onclick="event.preventDefault();shareVerse(\'' + esc(book.n) + '\',' + ch + ',' + v + ')">📤 Share</button>' +
+        '</div>' +
+        '<a class="nkjv-pill" href="' + gatewayUrl(book.n, ch, v) + '" target="_blank" rel="noopener">Compare with NKJV &#8599;</a>' +
+        '<div class="verse-slot" id="vs-' + (order) + '-' + v + '"></div>' +
       '</div></details>';
   }
 
@@ -437,7 +1374,10 @@ function render(bi, ch) {
     document.querySelectorAll('.vblock').forEach(d => {
       const ref = d.dataset.book + ' ' + d.dataset.ch + ':' + d.dataset.v;
       const b = JSON.parse(localStorage.getItem('rb-bookmarks') || '{}');
-      if (b[ref]) d.querySelector('.verse-actions .action-btn').textContent = '✓ Saved';
+      if (b[ref]) {
+        const btn = d.querySelector('.verse-actions-bar .action-btn');
+        if (btn) btn.textContent = '✓ Saved';
+      }
       const h = JSON.parse(localStorage.getItem('rb-highlights') || '{}');
       if (h[ref]) d.classList.add('is-highlighted');
     });
@@ -454,8 +1394,6 @@ function render(bi, ch) {
       if (comm) fillChapterInline(order, comm);
     });
   }
-
-  window.scrollTo(0, 0);
 }
 
 // On-demand verse commentary
@@ -499,16 +1437,16 @@ async function requestVerse(book, ch, v, order) {
       return;
     }
     if (data.status === "busy") {
-      slot.innerHTML = '<p class="writing-note">' + esc(data.message || "The writing queue is full - try again shortly.") + '</p>';
+      slot.innerHTML = '<p class="writing-note">' + esc(data.message || "Commentary queue is full - please try again shortly.") + '</p>';
       slotPending.delete(ref);
       return;
     }
-    slot.innerHTML = '<p class="writing-note">The context and meaning of ' + esc(ref) + ' are being written right now &mdash; they will appear here in about a minute. Keep this page open, or tap the verse again later.</p>';
+    slot.innerHTML = '<p class="writing-note">Commentary for ' + esc(ref) + ' is being written — it will appear here in about a minute.</p>';
     pollVerse(book, ch, v, order, ref, 8);
   } catch (err) {
     slot.innerHTML = '<p class="writing-note">' + ((navigator.onLine === false || offlineMode)
-      ? "You are offline and this verse is not saved on your device yet. Reconnect and tap it again to request its commentary."
-      : "Could not reach the commentary service. Check your connection and tap the verse again.") + '</p>';
+      ? "You are offline and this verse commentary is not stored locally."
+      : "Could not reach the commentary service. Please check your internet connection.") + '</p>';
     slotPending.delete(ref);
   }
 }
@@ -546,26 +1484,60 @@ function readStore(key){try{return JSON.parse(localStorage.getItem(key)||'{}')}c
 function writeStore(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(e){showToast('Device storage is full. Please remove some saved items.', true)}}
 function verseText(book,ch,v){const b=books.find(x=>x.n===book);return b&&b.c[ch-1]?b.c[ch-1][v-1]||'':''}
 function refKey(book,ch,v){return book+' '+ch+':'+v}
-function toggleBookmark(book,ch,v,btn){const all=readStore('rb-bookmarks'),ref=refKey(book,ch,v);if(all[ref]){delete all[ref];if(btn)btn.textContent='🔖 Save';showToast('Bookmark removed')}else{all[ref]={book,ch,v,text:verseText(book,ch,v),savedAt:Date.now()};if(btn)btn.textContent='✓ Saved';showToast('Verse bookmarked')}writeStore('rb-bookmarks',all);updateDashboard()}
-function toggleHighlight(btn){const d=btn.closest('details'),ref=refKey(d.dataset.book,+d.dataset.ch,+d.dataset.v),all=readStore('rb-highlights');if(all[ref]){delete all[ref];d.classList.remove('is-highlighted');btn.textContent='✨ Highlight';showToast('Highlight removed')}else{all[ref]=true;d.classList.add('is-highlighted');btn.textContent='✓ Highlighted';showToast('Verse highlighted')}writeStore('rb-highlights',all)}
+
+function toggleBookmark(book,ch,v,btn){
+  const all=readStore('rb-bookmarks'),ref=refKey(book,ch,v);
+  if(all[ref]){
+    delete all[ref];
+    if(btn)btn.textContent='🔖 Save';
+    showToast('Bookmark removed');
+  } else {
+    all[ref]={book,ch,v,text:verseText(book,ch,v),savedAt:Date.now()};
+    if(btn)btn.textContent='✓ Saved';
+    showToast('Verse bookmarked!');
+  }
+  writeStore('rb-bookmarks',all);
+  updateDashboard();
+}
+
+function toggleHighlight(btn){
+  const d=btn.closest('details'),ref=refKey(d.dataset.book,+d.dataset.ch,+d.dataset.v),all=readStore('rb-highlights');
+  if(all[ref]){
+    delete all[ref];
+    d.classList.remove('is-highlighted');
+    btn.textContent='✨ Highlight';
+    showToast('Highlight removed');
+  } else {
+    all[ref]=true;
+    d.classList.add('is-highlighted');
+    btn.textContent='✓ Highlighted';
+    showToast('Verse highlighted!');
+  }
+  writeStore('rb-highlights',all);
+}
 
 function editNote(book, ch, v) {
   stopReadingAloud();
   const ref = refKey(book, ch, v);
   const all = readStore('rb-notes');
   const existing = all[ref] ? all[ref].note || '' : '';
-  const panel = document.getElementById('utilityPanel');
-  panel.classList.remove('hidden');
-  panel.innerHTML = '<h2>📝 Study note for ' + escapeHtml(ref) + '</h2>' +
-    '<p class="muted">&ldquo;' + escapeHtml(verseText(book, ch, v)) + '&rdquo;</p>' +
-    '<label class="muted" for="noteText">Your note</label>' +
-    '<textarea id="noteText" rows="4" placeholder="Write your thoughts, cross-references, or reflections on this verse...">' + escapeHtml(existing) + '</textarea>' +
-    '<div class="tool-buttons" style="margin-top:10px">' +
-    '<button class="action-btn" onclick="saveNote(' + JSON.stringify(book) + ',' + ch + ',' + v + ')">Save note</button>' +
-    (existing ? '<button class="action-btn secondary" onclick="deleteNote(' + JSON.stringify(book) + ',' + ch + ',' + v + ')">Delete note</button>' : '') +
-    '<button class="action-btn secondary" onclick="document.getElementById(\'utilityPanel\').classList.add(\'hidden\')">Close</button>' +
-    '</div>';
-  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  
+  switchTab('library');
+  setLibSubTab('notes');
+  
+  const pane = document.getElementById('libraryContentPane');
+  pane.innerHTML = '<div class="panel-card">' +
+    '<h2>📝 Study Note for ' + escapeHtml(ref) + '</h2>' +
+    '<p class="panel-subtitle">&ldquo;' + escapeHtml(verseText(book, ch, v)) + '&rdquo;</p>' +
+    '<label class="form-label" for="noteText">Personal Reflection</label>' +
+    '<textarea id="noteText" class="form-control" rows="5" placeholder="Write your thoughts, applications, or insights on this verse...">' + escapeHtml(existing) + '</textarea>' +
+    '<div style="display:flex;gap:8px">' +
+      '<button class="action-btn" onclick="saveNote(' + JSON.stringify(book) + ',' + ch + ',' + v + ')">Save Note</button>' +
+      (existing ? '<button class="action-btn secondary" onclick="deleteNote(' + JSON.stringify(book) + ',' + ch + ',' + v + ')">Delete Note</button>' : '') +
+      '<button class="action-btn secondary" onclick="setLibSubTab(\'notes\')">Cancel</button>' +
+    '</div>' +
+  '</div>';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function saveNote(book, ch, v) {
@@ -581,7 +1553,7 @@ function saveNote(book, ch, v) {
     writeStore('rb-notes', all);
     showToast('Note deleted');
   }
-  showLibrary('notes');
+  setLibSubTab('notes');
 }
 
 function deleteNote(book, ch, v) {
@@ -590,116 +1562,606 @@ function deleteNote(book, ch, v) {
   delete all[ref];
   writeStore('rb-notes', all);
   showToast('Note deleted');
-  showLibrary('notes');
+  setLibSubTab('notes');
 }
 
-function updateDashboard(){const b=readStore('rb-bookmarks'),v=readStore('rb-visited');const a=document.getElementById('savedCount'),r=document.getElementById('readCount'),st=document.getElementById('streakCount');if(a)a.textContent=Object.keys(b).length;if(r)r.textContent=Array.isArray(v)?v.length:0;if(st)st.textContent=calculateStreak()+' day'+(calculateStreak()===1?'':'s')}
+function updateDashboard(){
+  const b=readStore('rb-bookmarks'),v=readStore('rb-visited');
+  const a=document.getElementById('savedCount'),r=document.getElementById('readCount'),st=document.getElementById('streakCount');
+  if(a)a.textContent=Object.keys(b).length;
+  if(r)r.textContent=Array.isArray(v)?v.length:0;
+  if(st)st.textContent=calculateStreak()+' d';
+}
+
 function localDayStamp(date){const d=date||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function markReadingDay(){const days=readStore('rb-reading-days');days[localDayStamp()]=true;writeStore('rb-reading-days',days)}
 function calculateStreak(){const days=readStore('rb-reading-days');let streak=0,d=new Date();if(!days[localDayStamp(d)])d.setDate(d.getDate()-1);while(days[localDayStamp(d)]){streak++;d.setDate(d.getDate()-1);if(streak>4000)break}return streak}
-function setFontSize(value){document.documentElement.style.setProperty('--bible-font',value+'px');document.querySelectorAll('summary .verse-text').forEach(x=>x.style.fontSize=value+'px');try{localStorage.setItem('rb-font',value)}catch(e){}}
-function toggleTheme(){document.body.classList.toggle('dark');const dark=document.body.classList.contains('dark');document.getElementById('themeBtn').textContent=dark?'☀️ Light mode':'🌙 Dark mode';try{localStorage.setItem('rb-dark',dark?'1':'0')}catch(e){}}
-function searchBible(){const q=(document.getElementById('searchInput').value||'').trim().toLowerCase(),box=document.getElementById('searchResults');if(!q){box.classList.remove('hidden');box.innerHTML='<h2>Search Scripture</h2><p class="muted">Enter a word or phrase to search the Bible text included in this app.</p>';return}const hits=[];for(const b of books){for(let ci=0;ci<b.c.length;ci++){for(let vi=0;vi<b.c[ci].length;vi++){const text=b.c[ci][vi];if(text.toLowerCase().includes(q)){hits.push({book:b.n,ch:ci+1,v:vi+1,text});if(hits.length>=100)break}}if(hits.length>=100)break}if(hits.length>=100)break}box.classList.remove('hidden');box.innerHTML='<h2>Search results</h2><p class="muted">'+hits.length+(hits.length===100?' or more':'')+' matches for “'+escapeHtml(q)+'”</p>'+(hits.length?hits.map(x=>'<div class="result-item"><strong>'+escapeHtml(x.book+' '+x.ch+':'+x.v)+'</strong><div>'+escapeHtml(x.text)+'</div><button class="action-btn" onclick="goToVerse('+JSON.stringify(x.book)+','+x.ch+','+x.v+')">Open verse</button></div>').join(''):'<div class="empty-state">No matching verses found. Try a shorter word.</div>')}
-function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
-function goToVerse(book,ch,v){const bi=books.findIndex(x=>x.n===book);if(bi<0)return;document.getElementById('bookSel').value=bi;fillChapterSel(bi,ch);render(bi,ch);setTimeout(()=>{const d=document.querySelector('details.vblock[data-v="'+v+'"][data-ch="'+ch+'"][data-book="'+CSS.escape(book)+'"]');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}},60)}
-function showLibrary(kind){stopReadingAloud();const panel=document.getElementById('utilityPanel');const key={'bookmarks':'rb-bookmarks','notes':'rb-notes','highlights':'rb-highlights'}[kind],data=readStore(key);panel.classList.remove('hidden');const entries=Object.entries(data);panel.innerHTML='<h2>'+({'bookmarks':'🔖 Bookmarks','notes':'📝 My study notes','highlights':'✨ Highlighted verses'}[kind])+'</h2>'+(entries.length?entries.map(([ref,x])=>{const item=typeof x==='object'?x:{};return '<div class="saved-item"><strong>'+escapeHtml(ref)+'</strong><div>'+escapeHtml(item.text||verseText(item.book,item.ch,item.v)||'')+'</div>'+(kind==='notes'?'<p>'+escapeHtml(item.note||'')+'</p>':'')+'<button class="action-btn" onclick="goToVerse('+JSON.stringify(item.book||ref.split(' ')[0])+','+(item.ch||+(ref.match(/ (\d+):/)||[])[1]||1)+','+(item.v||+(ref.match(/:(\d+)/)||[])[1]||1)+')">Open</button><button class="action-btn secondary" onclick="removeSaved('+JSON.stringify(key)+','+JSON.stringify(ref)+')">Remove</button></div>'}).join(''):'<div class="empty-state">Nothing saved here yet. Open a verse and use its tools.</div>');panel.scrollIntoView({behavior:'smooth',block:'start'})}
-function removeSaved(key,ref){const data=readStore(key);delete data[ref];writeStore(key,data);const kind=key==='rb-bookmarks'?'bookmarks':key==='rb-notes'?'notes':'highlights';showLibrary(kind);updateDashboard();showToast('Item removed')}
-const plans=[{name:'7 Days with Jesus',desc:'Read selected passages about the life and teaching of Jesus.',refs:[['John',1],['Mark',1],['Luke',5],['Matthew',5],['John',3],['John',15],['John',20]]},{name:'Psalms for Peace',desc:'A week of prayer, comfort, and trust.',refs:[['Psalms',23],['Psalms',27],['Psalms',46],['Psalms',91],['Psalms',121],['Psalms',139],['Psalms',150]]},{name:'Foundations of Faith',desc:'Seven foundational chapters for Bible study.',refs:[['Genesis',1],['Genesis',12],['Exodus',20],['Psalms',1],['Isaiah',53],['Romans',8],['Ephesians',2]]}];
-function showPlans(){stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');panel.innerHTML='<h2>📖 Reading plans</h2><p class="muted">Choose a guided 7-day plan. Your progress is saved on this device.</p>'+plans.map((p,i)=>'<div class="saved-item"><strong>'+escapeHtml(p.name)+'</strong><p class="muted">'+escapeHtml(p.desc)+'</p><button class="action-btn" onclick="openPlan('+i+')">View plan</button></div>').join('');panel.scrollIntoView({behavior:'smooth',block:'start'})}
-function openPlan(i){const p=plans[i],done=readStore('rb-plan-'+i),panel=document.getElementById('utilityPanel');panel.innerHTML='<h2>'+escapeHtml(p.name)+'</h2><p class="muted">Tick days as you finish them.</p>'+p.refs.map((r,d)=>'<div class="saved-item"><label><input type="checkbox" '+(done[d]?'checked':'')+' onchange="markPlan('+i+','+d+',this.checked)"> Day '+(d+1)+': '+escapeHtml(r[0]+' '+r[1])+'</label> <button class="action-btn secondary" onclick="goToVerse('+JSON.stringify(r[0])+','+r[1]+',1)">Read</button></div>').join('')+'<button class="action-btn secondary" onclick="showPlans()">← All plans</button>'}
-function markPlan(i,d,checked){const done=readStore('rb-plan-'+i);if(checked)done[d]=true;else delete done[d];writeStore('rb-plan-'+i,done);showToast(checked ? 'Day marked complete' : 'Day unmarked')}
-function openDailyVerse(){const ref=document.getElementById('dailyRef').textContent;const m=ref.match(/^(.*) (\d+):(\d+)$/);if(m)goToVerse(m[1],+m[2],+m[3])}
 
-// Topical Bible study index
-const studyTopics=[
-{name:'Prayer',desc:'Learning to pray, trust God and bring requests to Him.',refs:[['Matthew',6,9],['Philippians',4,6],['1 Thessalonians',5,17]]},
-{name:'Faith',desc:'Trusting God and growing through His Word.',refs:[['Hebrews',11,1],['Romans',10,17],['James',2,17]]},
-{name:'Forgiveness',desc:'Receiving mercy and extending forgiveness to others.',refs:[['Matthew',6,14],['Ephesians',4,32],['Colossians',3,13]]},
-{name:'Peace and worry',desc:'Turning worry into prayer and resting in God’s peace.',refs:[['Philippians',4,6],['John',14,27],['Psalms',23,1]]},
-{name:'Love',desc:'God’s love and practical love for one another.',refs:[['1 Corinthians',13,4],['John',13,34],['1 John',4,7]]},
-{name:'Wisdom',desc:'Seeking God’s direction and choosing a wise path.',refs:[['Proverbs',3,5],['James',1,5],['Proverbs',4,7]]},
-{name:'Marriage and family',desc:'Commitment, unity, service and love in family life.',refs:[['Genesis',2,24],['Ephesians',5,25],['1 Corinthians',13,4]]},
-{name:'Holy Spirit',desc:'The Helper, spiritual power and the fruit of the Spirit.',refs:[['John',14,26],['Acts',1,8],['Galatians',5,22]]},
-{name:'Salvation',desc:'Grace, faith and the promise of new life in Christ.',refs:[['John',3,16],['Romans',10,9],['Ephesians',2,8]]}
-];
-function showTopics(){stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');panel.innerHTML='<h2>🧭 Topical Bible studies</h2><p class="muted">Choose a theme and explore key passages. These are Scripture reading guides, not a replacement for reading each passage in context.</p>'+studyTopics.map((t,i)=>'<article class="saved-item"><strong>'+escapeHtml(t.name)+'</strong><p class="muted">'+escapeHtml(t.desc)+'</p>'+t.refs.map(r=>'<button class="action-btn secondary" onclick="goToVerse('+JSON.stringify(r[0])+','+r[1]+','+r[2]+')">'+escapeHtml(r[0]+' '+r[1]+':'+r[2])+'</button>').join(' ')+'</article>').join('');panel.scrollIntoView({behavior:'smooth',block:'start'})}
-
-// Prayer journal, speech and backup
-function showPrayerJournal(){stopReadingAloud();const panel=document.getElementById('utilityPanel'),items=readStore('rb-prayers');panel.classList.remove('hidden');const entries=Object.entries(items).sort((a,b)=>(b[1].updatedAt||0)-(a[1].updatedAt||0));panel.innerHTML='<h2>🙏 Prayer journal</h2><p class="muted">Keep private prayer requests, reflections and answered prayers on this device.</p><label class="muted" for="prayerTitle">Title</label><input id="prayerTitle" maxlength="100" placeholder="e.g. Prayer for my family"><label class="muted" for="prayerBody">Prayer or reflection</label><textarea id="prayerBody" rows="4" maxlength="5000" placeholder="Write your prayer here…"></textarea><label><input id="prayerAnswered" type="checkbox"> Mark as answered prayer</label><button class="action-btn" onclick="savePrayer()">Save prayer</button><div style="margin-top:14px"><h3>My entries ('+entries.length+')</h3>'+(entries.length?entries.map(([id,x])=>'<article class="saved-item"><strong>'+escapeHtml(x.title||'Untitled prayer')+'</strong><div class="muted">'+escapeHtml(new Date(x.updatedAt||Date.now()).toLocaleDateString())+(x.answered?' · ✓ Answered':'')+'</div><p style="white-space:pre-wrap">'+escapeHtml(x.body||'')+'</p><button class="action-btn secondary" onclick="editPrayer('+JSON.stringify(id)+')">Edit</button><button class="action-btn secondary" onclick="deletePrayer('+JSON.stringify(id)+')">Delete</button></article>').join(''):'<div class="empty-state">Your prayer journal is ready when you are.</div>')+'</div>';panel.scrollIntoView({behavior:'smooth',block:'start'})}
-function savePrayer(){const title=(document.getElementById('prayerTitle').value||'').trim(),body=(document.getElementById('prayerBody').value||'').trim();if(!title&&!body){showToast('Write a title or prayer first.', true);return}const all=readStore('rb-prayers'),id='prayer-'+Date.now();all[id]={title:title||'Untitled prayer',body,answered:document.getElementById('prayerAnswered').checked,createdAt:Date.now(),updatedAt:Date.now()};writeStore('rb-prayers',all);showToast('Prayer saved');showPrayerJournal()}
-function editPrayer(id){
-  const all=readStore('rb-prayers'),x=all[id];
-  if(!x)return;
-  const panel=document.getElementById('utilityPanel');
-  panel.classList.remove('hidden');
-  panel.innerHTML='<h2>✏️ Edit prayer</h2>'+
-    '<label class="muted" for="prayerTitle">Title</label>'+
-    '<input id="prayerTitle" maxlength="100" value="'+escapeHtml(x.title||'')+'">'+
-    '<label class="muted" for="prayerBody">Prayer or reflection</label>'+
-    '<textarea id="prayerBody" rows="4" maxlength="5000">'+escapeHtml(x.body||'')+'</textarea>'+
-    '<label><input id="prayerAnswered" type="checkbox" '+(x.answered?'checked':'')+'> Mark as answered prayer</label>'+
-    '<div class="tool-buttons" style="margin-top:10px">'+
-    '<button class="action-btn" onclick="updatePrayer('+JSON.stringify(id)+')">Update prayer</button>'+
-    '<button class="action-btn secondary" onclick="showPrayerJournal()">Cancel</button>'+
-    '</div>';
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
+function setFontSize(value){
+  document.documentElement.style.setProperty('--bible-font', value + 'px');
+  const p = document.getElementById('fontSizePreview');
+  if (p) p.style.fontSize = value + 'px';
+  const slider = document.getElementById('fontSize');
+  if (slider && slider.value !== value) slider.value = value;
+  try { localStorage.setItem('rb-font', value); } catch(e){}
 }
-function updatePrayer(id){
-  const all=readStore('rb-prayers');
-  const title=(document.getElementById('prayerTitle').value||'').trim();
-  const body=(document.getElementById('prayerBody').value||'').trim();
-  if(!title&&!body){showToast('Write a title or prayer first.', true);return}
-  all[id]={
-    title:title||'Untitled prayer',
-    body,
-    answered:document.getElementById('prayerAnswered').checked,
-    createdAt:all[id]?.createdAt||Date.now(),
-    updatedAt:Date.now()
+
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark');
+  try { localStorage.setItem('rb-dark', isDark ? '1' : '0'); } catch(e){}
+  showToast(isDark ? 'Dark mode enabled' : 'Light mode enabled');
+}
+
+function applyTheme(isDark) {
+  if (isDark) document.body.classList.add('dark');
+  else document.body.classList.remove('dark');
+  try { localStorage.setItem('rb-dark', isDark ? '1' : '0'); } catch(e){}
+  showToast(isDark ? 'Dark mode applied' : 'Light mode applied');
+}
+
+// Sharing
+function getAppVerseUrl(book, ch) {
+  try {
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.hash = '';
+    if (book) url.searchParams.set('book', book);
+    if (ch) url.searchParams.set('chapter', ch);
+    return url.toString();
+  } catch (e) {
+    return window.location.href;
+  }
+}
+
+async function shareDailyVerse() {
+  const textEl = document.getElementById('dailyText');
+  const refEl = document.getElementById('dailyRef');
+  const text = (textEl ? textEl.textContent : '').trim();
+  const ref = (refEl ? refEl.textContent : '').trim();
+
+  if (!text || !ref || text.startsWith('Loading')) {
+    showToast('Daily verse is still loading.');
+    return;
+  }
+
+  const m = ref.match(/^(.*)\s+(\d+):(\d+)$/);
+  const book = m ? m[1] : '';
+  const ch = m ? parseInt(m[2], 10) : 1;
+  const linkUrl = getAppVerseUrl(book, ch);
+  const cleanText = text.replace(/^“|”$/g, '').trim();
+
+  const shareText = '“' + cleanText + '”\n— ' + ref + ' (KJV)\n\n' + linkUrl;
+  const shareData = {
+    title: 'Daily Scripture — ' + ref,
+    text: shareText,
+    url: linkUrl
   };
-  writeStore('rb-prayers',all);
-  showToast('Prayer updated');
-  showPrayerJournal();
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      showToast('Verse shared!');
+    } catch (err) {
+      if (err.name !== 'AbortError') copyFormattedVerse(shareText);
+    }
+  } else {
+    copyFormattedVerse(shareText);
+  }
 }
-function deletePrayer(id){
-  const all=readStore('rb-prayers');
+
+async function shareVerse(book, ch, v) {
+  const text = verseText(book, ch, v);
+  const ref = book + ' ' + ch + ':' + v;
+  const linkUrl = getAppVerseUrl(book, ch);
+  const cleanText = text.replace(/^“|”$/g, '').trim();
+
+  const shareText = '“' + cleanText + '”\n— ' + ref + ' (KJV)\n\n' + linkUrl;
+  const shareData = {
+    title: ref + ' (KJV) — RonaldBible',
+    text: shareText,
+    url: linkUrl
+  };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+      showToast('Verse shared!');
+    } catch (err) {
+      if (err.name !== 'AbortError') copyFormattedVerse(shareText);
+    }
+  } else {
+    copyFormattedVerse(shareText);
+  }
+}
+
+function copyFormattedVerse(content) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(content).then(() => {
+      showToast('Verse & link copied to clipboard!');
+    }).catch(() => {
+      showToast('Could not copy verse.', true);
+    });
+  } else {
+    showToast('Sharing is not supported on this device.', true);
+  }
+}
+
+function goToVerse(book, ch, v) {
+  const bi = books.findIndex(x => x.n === book);
+  if (bi < 0) return;
+  switchTab('read');
+  document.getElementById('bookSel').value = bi;
+  fillChapterSel(bi, ch);
+  render(bi, ch);
+  setTimeout(() => {
+    const d = document.querySelector('details.vblock[data-v="' + v + '"][data-ch="' + ch + '"][data-book="' + CSS.escape(book) + '"]');
+    if (d) {
+      d.open = true;
+      d.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 120);
+}
+
+function openDailyVerse() {
+  const ref = document.getElementById('dailyRef').textContent;
+  const m = ref.match(/^(.*) (\d+):(\d+)$/);
+  if (m) goToVerse(m[1], +m[2], +m[3]);
+}
+
+// Search
+function quickSearch(term) {
+  const input = document.getElementById('searchInput');
+  if (input) input.value = term;
+  searchBible();
+}
+
+function searchBible() {
+  const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  const box = document.getElementById('searchResults');
+  if (!q) {
+    box.innerHTML = '<div class="empty-state">Enter a word or reference to search across all 66 books of the Bible.</div>';
+    return;
+  }
+  const hits = [];
+  for (const b of books) {
+    for (let ci = 0; ci < b.c.length; ci++) {
+      for (let vi = 0; vi < b.c[ci].length; vi++) {
+        const text = b.c[ci][vi];
+        if (text.toLowerCase().includes(q)) {
+          hits.push({ book: b.n, ch: ci + 1, v: vi + 1, text });
+          if (hits.length >= 100) break;
+        }
+      }
+      if (hits.length >= 100) break;
+    }
+    if (hits.length >= 100) break;
+  }
+  box.innerHTML = '<div style="margin-bottom:12px;font-size:0.86rem;color:var(--muted)">' + hits.length + (hits.length === 100 ? ' or more' : '') + ' passages found for “' + escapeHtml(q) + '”</div>' +
+    (hits.length
+      ? hits.map(x => '<div class="item-card">' +
+          '<strong>' + escapeHtml(x.book + ' ' + x.ch + ':' + x.v) + '</strong>' +
+          '<p>&ldquo;' + escapeHtml(x.text) + '&rdquo;</p>' +
+          '<div style="display:flex;gap:6px">' +
+            '<button class="action-btn" onclick="goToVerse(' + JSON.stringify(x.book) + ',' + x.ch + ',' + x.v + ')">Open Verse</button>' +
+            '<button class="action-btn secondary" onclick="shareVerse(' + JSON.stringify(x.book) + ',' + x.ch + ',' + x.v + ')">📤 Share</button>' +
+          '</div>' +
+        '</div>').join('')
+      : '<div class="empty-state">No matching verses found for “' + escapeHtml(q) + '”. Try another word or topic.</div>');
+}
+
+// Study Sub-Tabs
+function setStudySubTab(subTab) {
+  currentStudySubTab = subTab;
+  ['topics', 'xrefs', 'dict', 'guide'].forEach(t => {
+    const btn = document.getElementById('studyTab-' + t);
+    if (btn) btn.classList.toggle('active', t === subTab);
+  });
+  renderStudySubTab(subTab);
+}
+
+function renderStudySubTab(subTab) {
+  const pane = document.getElementById('studyContentPane');
+  if (subTab === 'topics') {
+    pane.innerHTML = '<div class="panel-card">' +
+      '<h2>🧭 Topical Bible Studies</h2>' +
+      '<p class="panel-subtitle">Explore key foundational passages grouped by essential themes of Christian life.</p>' +
+      studyTopics.map(t => '<div class="item-card">' +
+        '<strong>' + escapeHtml(t.name) + '</strong>' +
+        '<p>' + escapeHtml(t.desc) + '</p>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+          t.refs.map(r => '<button class="action-btn secondary" onclick="goToVerse(' + JSON.stringify(r[0]) + ',' + r[1] + ',' + r[2] + ')">' + escapeHtml(r[0] + ' ' + r[1] + ':' + r[2]) + '</button>').join('') +
+        '</div>' +
+      '</div>').join('') +
+    '</div>';
+  } else if (subTab === 'xrefs') {
+    const keys = Object.keys(crossReferenceData).sort();
+    pane.innerHTML = '<div class="panel-card">' +
+      '<h2>🔗 Scripture Cross-References</h2>' +
+      '<p class="panel-subtitle">Discover how Scriptures connect across the Old and New Testaments.</p>' +
+      '<input id="xrefSearch" class="form-control" placeholder="Search reference e.g. John 3:16 or Romans..." oninput="filterCrossReferences()">' +
+      '<div id="xrefResults">' + crossReferenceCards(keys) + '</div>' +
+    '</div>';
+  } else if (subTab === 'dict') {
+    pane.innerHTML = '<div class="panel-card">' +
+      '<h2>📚 Bible Dictionary</h2>' +
+      '<p class="panel-subtitle">Introductory theological terms and historical context summaries.</p>' +
+      '<input id="dictSearch" class="form-control" placeholder="Search a theological concept..." oninput="filterBibleDictionary()">' +
+      '<div id="dictResults">' + dictionaryCards(bibleDictionary) + '</div>' +
+    '</div>';
+  } else if (subTab === 'guide') {
+    const bi = Number(document.getElementById('bookSel')?.value || 0);
+    const ch = Number(document.getElementById('chapSel')?.value || 1);
+    const book = books[bi];
+    pane.innerHTML = '<div class="panel-card">' +
+      '<h2>🧠 Guided Bible Study Worksheet</h2>' +
+      '<p class="panel-subtitle">Observe, interpret, apply, and pray through Scripture in context.</p>' +
+      '<div style="display:flex;gap:8px;margin-bottom:12px">' +
+        '<button class="action-btn secondary" onclick="showSavedStudies()">View Saved Studies</button>' +
+      '</div>' +
+      '<label class="form-label" for="studyReference">Passage Reference</label>' +
+      '<input id="studyReference" class="form-control" value="' + escapeHtml(book ? book.n + ' ' + ch : 'John 3') + '">' +
+      '<label class="form-label" for="studyObservation">1. Observation — What does the text state?</label>' +
+      '<textarea id="studyObservation" class="form-control" rows="3" placeholder="Key people, recurring words, events, questions..."></textarea>' +
+      '<label class="form-label" for="studyMeaning">2. Interpretation — What did it mean in original context?</label>' +
+      '<textarea id="studyMeaning" class="form-control" rows="3" placeholder="Main theological truths, context of the chapter..."></textarea>' +
+      '<label class="form-label" for="studyApplication">3. Personal Application — How does this apply today?</label>' +
+      '<textarea id="studyApplication" class="form-control" rows="3" placeholder="Concrete personal change, attitude, or obedience..."></textarea>' +
+      '<label class="form-label" for="studyPrayer">4. Prayer Response</label>' +
+      '<textarea id="studyPrayer" class="form-control" rows="3" placeholder="Respond to the Lord based on this passage..."></textarea>' +
+      '<button class="action-btn" onclick="saveStudyWorksheet()">Save Study Worksheet</button>' +
+    '</div>';
+  }
+}
+
+// Cross-references
+function renderReferenceButton(ref){
+  return '<button class="action-btn secondary" onclick="goToVerse(' + JSON.stringify(ref[0]) + ',' + ref[1] + ',' + ref[2] + ')">' + escapeHtml(ref[0] + ' ' + ref[1] + ':' + ref[2]) + '</button>';
+}
+function crossReferenceCards(keys){
+  return keys.map(key => {
+    const m = key.match(/^(.*) (\d+):(\d+)$/);
+    const ref = [m[1], +m[2], +m[3]];
+    const text = verseText(...ref);
+    return '<div class="item-card">' +
+      '<strong>' + escapeHtml(key) + '</strong>' +
+      '<p>&ldquo;' + escapeHtml(text || 'Read passage') + '&rdquo;</p>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+        renderReferenceButton(ref) +
+        crossReferenceData[key].map(renderReferenceButton).join('') +
+      '</div>' +
+    '</div>';
+  }).join('') || '<div class="empty-state">No matching cross-references found.</div>';
+}
+function filterCrossReferences(){
+  const q = (document.getElementById('xrefSearch').value || '').trim().toLowerCase();
+  const keys = Object.keys(crossReferenceData).filter(k => {
+    const all = [k, ...crossReferenceData[k].map(r => r.join(' ')), ...crossReferenceData[k].map(r => r[0] + ' ' + r[1] + ':' + r[2])].join(' ').toLowerCase();
+    return all.includes(q);
+  }).sort();
+  document.getElementById('xrefResults').innerHTML = crossReferenceCards(keys);
+}
+
+// Dictionary
+function dictionaryCards(items){
+  return items.map(([term, def]) => '<div class="item-card">' +
+    '<strong>' + escapeHtml(term) + '</strong>' +
+    '<p>' + escapeHtml(def) + '</p>' +
+  '</div>').join('') || '<div class="empty-state">No dictionary entry found.</div>';
+}
+function filterBibleDictionary(){
+  const q = (document.getElementById('dictSearch').value || '').trim().toLowerCase();
+  document.getElementById('dictResults').innerHTML = dictionaryCards(bibleDictionary.filter(([t, d]) => (t + ' ' + d).toLowerCase().includes(q)));
+}
+
+// Study Worksheet storage
+function saveStudyWorksheet(){
+  const reference = (document.getElementById('studyReference').value || '').trim();
+  if(!reference){ showToast('Enter a Scripture passage first.', true); return; }
+  const all = readStore('rb-study-worksheets');
+  const id = 'study-' + Date.now();
+  all[id] = {
+    reference,
+    observation: document.getElementById('studyObservation').value.trim(),
+    meaning: document.getElementById('studyMeaning').value.trim(),
+    application: document.getElementById('studyApplication').value.trim(),
+    prayer: document.getElementById('studyPrayer').value.trim(),
+    updatedAt: Date.now()
+  };
+  writeStore('rb-study-worksheets', all);
+  showToast('Study worksheet saved!');
+  showSavedStudies();
+}
+function showSavedStudies(){
+  const pane = document.getElementById('studyContentPane');
+  const all = readStore('rb-study-worksheets');
+  const entries = Object.entries(all).sort((a,b) => (b[1].updatedAt||0) - (a[1].updatedAt||0));
+  pane.innerHTML = '<div class="panel-card">' +
+    '<h2>🧠 My Saved Bible Studies</h2>' +
+    '<div style="margin-bottom:12px">' +
+      '<button class="action-btn secondary" onclick="renderStudySubTab(\'guide\')">← New Study Worksheet</button>' +
+    '</div>' +
+    (entries.length ? entries.map(([id, x]) => '<div class="item-card">' +
+      '<strong>' + escapeHtml(x.reference) + '</strong>' +
+      '<p><b>Observation:</b> ' + escapeHtml(x.observation || '—') + '</p>' +
+      '<p><b>Interpretation:</b> ' + escapeHtml(x.meaning || '—') + '</p>' +
+      '<p><b>Application:</b> ' + escapeHtml(x.application || '—') + '</p>' +
+      '<p><b>Prayer:</b> ' + escapeHtml(x.prayer || '—') + '</p>' +
+      '<button class="action-btn secondary" onclick="deleteStudyWorksheet(' + JSON.stringify(id) + ')">Delete</button>' +
+    '</div>').join('') : '<div class="empty-state">No study worksheets saved yet. Start a new study to record your insights.</div>') +
+  '</div>';
+}
+function deleteStudyWorksheet(id){
+  const all = readStore('rb-study-worksheets');
   delete all[id];
-  writeStore('rb-prayers',all);
-  showToast('Prayer entry deleted');
-  showPrayerJournal();
+  writeStore('rb-study-worksheets', all);
+  showToast('Study notes deleted');
+  showSavedStudies();
 }
 
-let activeUtterance=null;
-function readCurrentChapter(){if(!books.length)return;const bi=Number(document.getElementById('bookSel').value||0),ch=Number(document.getElementById('chapSel').value||1),book=books[bi];if(!book||!book.c[ch-1])return;const text=book.c[ch-1].map((v,i)=>(i+1)+'. '+v).join(' ');if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){showToast('Read aloud is not supported in this browser.', true);return}stopReadingAloud();activeUtterance=new SpeechSynthesisUtterance(book.n+' chapter '+ch+'. '+text);activeUtterance.rate=0.88;activeUtterance.onend=()=>{activeUtterance=null};speechSynthesis.speak(activeUtterance);const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');panel.innerHTML='<h2>🔊 Reading aloud</h2><p>Now reading '+escapeHtml(book.n+' '+ch)+'.</p><button class="action-btn" onclick="stopReadingAloud()">■ Stop reading</button>';panel.scrollIntoView({behavior:'smooth',block:'start'})}
-function stopReadingAloud(){if('speechSynthesis' in window)speechSynthesis.cancel();activeUtterance=null}
+// Library Sub-Tabs
+function setLibSubTab(subTab) {
+  currentLibSubTab = subTab;
+  ['bookmarks', 'notes', 'highlights', 'prayers', 'plans'].forEach(t => {
+    const btn = document.getElementById('libTab-' + t);
+    if (btn) btn.classList.toggle('active', t === subTab);
+  });
+  renderLibSubTab(subTab);
+}
 
-const BACKUP_KEYS=['rb-bookmarks','rb-highlights','rb-notes','rb-visited','rb-reading-days','rb-prayers','rb-study-worksheets','rb-font','rb-dark','rb-plan-0','rb-plan-1','rb-plan-2','twe-pos'];
-function createBackup(){const data={app:'RonaldBible',formatVersion:1,exportedAt:new Date().toISOString(),data:{}};BACKUP_KEYS.forEach(k=>{try{const v=localStorage.getItem(k);if(v!==null)data.data[k]=v}catch(e){}});return JSON.stringify(data,null,2)}
-function showBackup(){stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');panel.innerHTML='<h2>💾 Backup & restore</h2><p class="muted">Back up bookmarks, notes, highlights, prayer journal, guided study notes, reading progress and preferences. Keep this backup private because it may contain personal notes.</p><button class="action-btn" onclick="generateBackup()">Generate backup</button><label class="muted" for="backupText" style="display:block;margin-top:12px">Backup JSON</label><textarea id="backupText" rows="8" placeholder="Tap Generate backup, or paste a previous backup here."></textarea><div class="tool-buttons"><button onclick="copyBackup()">Copy backup text</button><button class="secondary" onclick="restoreBackup()">Restore from pasted backup</button></div><p class="muted">To keep a copy, generate the backup, copy all the text, then save it in a private note or file. Restoring replaces only the listed RonaldBible saved-data keys.</p>';panel.scrollIntoView({behavior:'smooth',block:'start'})}
-function generateBackup(){const t=document.getElementById('backupText');t.value=createBackup();t.focus();t.select();showToast('Backup generated')}
+function renderLibSubTab(subTab) {
+  const pane = document.getElementById('libraryContentPane');
+  if (subTab === 'bookmarks' || subTab === 'notes' || subTab === 'highlights') {
+    const key = { 'bookmarks': 'rb-bookmarks', 'notes': 'rb-notes', 'highlights': 'rb-highlights' }[subTab];
+    const data = readStore(key);
+    const entries = Object.entries(data);
+    const titles = { 'bookmarks': '🔖 Saved Bookmarks', 'notes': '📝 Personal Study Notes', 'highlights': '✨ Highlighted Passages' };
+    pane.innerHTML = '<div class="panel-card">' +
+      '<h2>' + titles[subTab] + '</h2>' +
+      '<p class="panel-subtitle">' + entries.length + ' passage' + (entries.length === 1 ? '' : 's') + ' saved locally</p>' +
+      (entries.length ? entries.map(([ref, x]) => {
+        const item = typeof x === 'object' ? x : {};
+        const bName = item.book || ref.split(' ')[0];
+        const cNum = item.ch || +(ref.match(/ (\d+):/) || [])[1] || 1;
+        const vNum = item.v || +(ref.match(/:(\d+)/) || [])[1] || 1;
+        return '<div class="item-card">' +
+          '<strong>' + escapeHtml(ref) + '</strong>' +
+          '<p>&ldquo;' + escapeHtml(item.text || verseText(item.book, item.ch, item.v) || '') + '&rdquo;</p>' +
+          (subTab === 'notes' ? '<p style="padding:8px 12px;background:var(--card-subtle);border-radius:8px;border-left:3px solid var(--green)"><b>Note:</b> ' + escapeHtml(item.note || '') + '</p>' : '') +
+          '<div style="display:flex;gap:6px;margin-top:8px">' +
+            '<button class="action-btn" onclick="goToVerse(' + JSON.stringify(bName) + ',' + cNum + ',' + vNum + ')">Open Verse</button>' +
+            '<button class="action-btn secondary" onclick="shareVerse(' + JSON.stringify(bName) + ',' + cNum + ',' + vNum + ')">📤 Share</button>' +
+            '<button class="action-btn secondary" onclick="removeSaved(' + JSON.stringify(key) + ',' + JSON.stringify(ref) + ')">Remove</button>' +
+          '</div>' +
+        '</div>';
+      }).join('') : '<div class="empty-state">No ' + subTab + ' saved yet. Tap any verse while reading to save.</div>') +
+    '</div>';
+  } else if (subTab === 'prayers') {
+    const items = readStore('rb-prayers');
+    const entries = Object.entries(items).sort((a,b) => (b[1].updatedAt||0) - (a[1].updatedAt||0));
+    pane.innerHTML = '<div class="panel-card">' +
+      '<h2>🙏 Prayer Journal</h2>' +
+      '<p class="panel-subtitle">Private prayer requests and reflections recorded on this device.</p>' +
+      '<label class="form-label" for="prayerTitle">Title</label>' +
+      '<input id="prayerTitle" class="form-control" maxlength="100" placeholder="e.g. Prayer for my family, peace, guidance...">' +
+      '<label class="form-label" for="prayerBody">Prayer or Reflection</label>' +
+      '<textarea id="prayerBody" class="form-control" rows="3" placeholder="Pour out your heart in prayer..."></textarea>' +
+      '<div style="margin-bottom:12px"><label style="display:inline-flex;align-items:center;gap:6px;font-size:0.9rem;cursor:pointer"><input id="prayerAnswered" type="checkbox"> Mark as answered prayer</label></div>' +
+      '<button class="action-btn" onclick="savePrayer()">Save Prayer</button>' +
+      '<div style="margin-top:20px">' +
+        '<h3 style="font-size:1.05rem;color:var(--green);margin-bottom:10px">Saved Prayers (' + entries.length + ')</h3>' +
+        (entries.length ? entries.map(([id, x]) => '<div class="item-card">' +
+          '<strong>' + escapeHtml(x.title || 'Untitled prayer') + '</strong>' +
+          '<div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px">' + escapeHtml(new Date(x.updatedAt || Date.now()).toLocaleDateString()) + (x.answered ? ' • ✓ Answered Prayer' : '') + '</div>' +
+          '<p style="white-space:pre-wrap">' + escapeHtml(x.body || '') + '</p>' +
+          '<div style="display:flex;gap:6px">' +
+            '<button class="action-btn secondary" onclick="editPrayer(' + JSON.stringify(id) + ')">Edit</button>' +
+            '<button class="action-btn secondary" onclick="deletePrayer(' + JSON.stringify(id) + ')">Delete</button>' +
+          '</div>' +
+        '</div>').join('') : '<div class="empty-state">Your prayer journal is empty. Add your first prayer above.</div>') +
+      '</div>' +
+    '</div>';
+  } else if (subTab === 'plans') {
+    pane.innerHTML = '<div class="panel-card">' +
+      '<h2>📖 Guided Reading Plans</h2>' +
+      '<p class="panel-subtitle">Structured 7-day Scripture journeys. Track your progress daily.</p>' +
+      plans.map((p, i) => {
+        const done = readStore('rb-plan-' + i);
+        const count = Object.keys(done).length;
+        return '<div class="item-card">' +
+          '<strong>' + escapeHtml(p.name) + '</strong>' +
+          '<p>' + escapeHtml(p.desc) + '</p>' +
+          '<div style="font-size:0.8rem;color:var(--green);font-weight:600;margin-bottom:10px">' + count + ' of 7 days completed</div>' +
+          '<div style="display:grid;gap:6px">' +
+            p.refs.map((r, d) => '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--card-subtle);border-radius:8px">' +
+              '<label style="display:flex;align-items:center;gap:8px;font-size:0.9rem;cursor:pointer"><input type="checkbox" ' + (done[d] ? 'checked' : '') + ' onchange="markPlan(' + i + ',' + d + ',this.checked)"> Day ' + (d + 1) + ': ' + escapeHtml(r[0] + ' ' + r[1]) + '</label>' +
+              '<button class="action-btn secondary" style="min-height:32px;padding:4px 10px;font-size:0.78rem" onclick="goToVerse(' + JSON.stringify(r[0]) + ',' + r[1] + ',1)">Read</button>' +
+            '</div>').join('') +
+          '</div>' +
+        '</div>';
+      }).join('') +
+    '</div>';
+  }
+}
+
+function removeSaved(key, ref) {
+  const data = readStore(key);
+  delete data[ref];
+  writeStore(key, data);
+  renderLibSubTab(currentLibSubTab);
+  updateDashboard();
+  showToast('Item removed');
+}
+
+function savePrayer() {
+  const title = (document.getElementById('prayerTitle').value || '').trim();
+  const body = (document.getElementById('prayerBody').value || '').trim();
+  if (!title && !body) { showToast('Write a title or prayer first.', true); return; }
+  const all = readStore('rb-prayers');
+  const id = 'prayer-' + Date.now();
+  all[id] = {
+    title: title || 'Untitled prayer',
+    body,
+    answered: document.getElementById('prayerAnswered').checked,
+    createdAt: Date.now(),
+    updatedAt: Date.now()
+  };
+  writeStore('rb-prayers', all);
+  showToast('Prayer saved!');
+  renderLibSubTab('prayers');
+}
+
+function editPrayer(id) {
+  const all = readStore('rb-prayers'), x = all[id];
+  if (!x) return;
+  const pane = document.getElementById('libraryContentPane');
+  pane.innerHTML = '<div class="panel-card">' +
+    '<h2>✏️ Edit Prayer</h2>' +
+    '<label class="form-label" for="prayerTitle">Title</label>' +
+    '<input id="prayerTitle" class="form-control" maxlength="100" value="' + escapeHtml(x.title || '') + '">' +
+    '<label class="form-label" for="prayerBody">Prayer or Reflection</label>' +
+    '<textarea id="prayerBody" class="form-control" rows="4">' + escapeHtml(x.body || '') + '</textarea>' +
+    '<div style="margin-bottom:12px"><label style="display:inline-flex;align-items:center;gap:6px;font-size:0.9rem;cursor:pointer"><input id="prayerAnswered" type="checkbox" ' + (x.answered ? 'checked' : '') + '> Mark as answered prayer</label></div>' +
+    '<div style="display:flex;gap:8px">' +
+      '<button class="action-btn" onclick="updatePrayer(' + JSON.stringify(id) + ')">Update Prayer</button>' +
+      '<button class="action-btn secondary" onclick="renderLibSubTab(\'prayers\')">Cancel</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function updatePrayer(id) {
+  const all = readStore('rb-prayers');
+  const title = (document.getElementById('prayerTitle').value || '').trim();
+  const body = (document.getElementById('prayerBody').value || '').trim();
+  if (!title && !body) { showToast('Write a title or prayer first.', true); return; }
+  all[id] = {
+    title: title || 'Untitled prayer',
+    body,
+    answered: document.getElementById('prayerAnswered').checked,
+    createdAt: all[id]?.createdAt || Date.now(),
+    updatedAt: Date.now()
+  };
+  writeStore('rb-prayers', all);
+  showToast('Prayer updated!');
+  renderLibSubTab('prayers');
+}
+
+function deletePrayer(id) {
+  const all = readStore('rb-prayers');
+  delete all[id];
+  writeStore('rb-prayers', all);
+  showToast('Prayer entry deleted');
+  renderLibSubTab('prayers');
+}
+
+function markPlan(i, d, checked) {
+  const done = readStore('rb-plan-' + i);
+  if (checked) done[d] = true; else delete done[d];
+  writeStore('rb-plan-' + i, done);
+  renderLibSubTab('plans');
+  showToast(checked ? 'Day marked complete' : 'Day unmarked');
+}
+
+// Audio Read Aloud
+let activeUtterance = null;
+function readCurrentChapter() {
+  if (!books.length) return;
+  const bi = Number(document.getElementById('bookSel')?.value || 0);
+  const ch = Number(document.getElementById('chapSel')?.value || 1);
+  const book = books[bi];
+  if (!book || !book.c[ch - 1]) return;
+  const text = book.c[ch - 1].map((v, i) => (i + 1) + '. ' + v).join(' ');
+  if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+    showToast('Read aloud is not supported in this browser.', true);
+    return;
+  }
+  stopReadingAloud();
+  activeUtterance = new SpeechSynthesisUtterance(book.n + ' chapter ' + ch + '. ' + text);
+  activeUtterance.rate = 0.88;
+  activeUtterance.onend = () => { activeUtterance = null; };
+  speechSynthesis.speak(activeUtterance);
+  showToast('Now reading ' + book.n + ' ' + ch);
+}
+
+function stopReadingAloud() {
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  activeUtterance = null;
+}
+
+// Backup & Restore
+const BACKUP_KEYS = ['rb-bookmarks','rb-highlights','rb-notes','rb-visited','rb-reading-days','rb-prayers','rb-study-worksheets','rb-font','rb-dark','rb-plan-0','rb-plan-1','rb-plan-2','twe-pos'];
+function createBackup(){
+  const data = { app: 'RonaldBible', formatVersion: 1, exportedAt: new Date().toISOString(), data: {} };
+  BACKUP_KEYS.forEach(k => {
+    try {
+      const v = localStorage.getItem(k);
+      if (v !== null) data.data[k] = v;
+    } catch(e){}
+  });
+  return JSON.stringify(data, null, 2);
+}
+function generateBackup(){
+  const t = document.getElementById('backupText');
+  t.value = createBackup();
+  t.focus();
+  t.select();
+  showToast('Backup JSON generated!');
+}
 function copyBackup(){
-  const t=document.getElementById('backupText');
-  if(!t.value)t.value=createBackup();
+  const t = document.getElementById('backupText');
+  if (!t.value) t.value = createBackup();
   t.focus();
   t.select();
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(t.value).then(() => showToast('Backup copied to clipboard!')).catch(() => showToast('Backup text selected. Press Ctrl+C or Copy.'));
+    navigator.clipboard.writeText(t.value)
+      .then(() => showToast('Backup copied to clipboard!'))
+      .catch(() => showToast('Backup selected. Press Copy.'));
   } else {
-    showToast('Backup text selected. Press Ctrl+C or Copy.');
+    showToast('Backup selected. Press Copy.');
   }
 }
 function restoreBackup(){
-  const field=document.getElementById('backupText');
+  const field = document.getElementById('backupText');
   let parsed;
-  try{parsed=JSON.parse(field.value)}catch(e){showToast('That is not valid JSON. Paste a backup generated by RonaldBible.', true);return}
-  if(!parsed||parsed.app!=='RonaldBible'||parsed.formatVersion!==1||!parsed.data||typeof parsed.data!=='object'){showToast('This backup is not a supported RonaldBible backup.', true);return}
-  try{
-    BACKUP_KEYS.forEach(k=>{if(Object.prototype.hasOwnProperty.call(parsed.data,k))localStorage.setItem(k,parsed.data[k])});
+  try { parsed = JSON.parse(field.value); } catch(e){
+    showToast('Invalid JSON. Paste a backup exported from RonaldBible.', true);
+    return;
+  }
+  if (!parsed || parsed.app !== 'RonaldBible' || parsed.formatVersion !== 1 || !parsed.data || typeof parsed.data !== 'object') {
+    showToast('This backup is not supported.', true);
+    return;
+  }
+  try {
+    BACKUP_KEYS.forEach(k => {
+      if (Object.prototype.hasOwnProperty.call(parsed.data, k)) {
+        localStorage.setItem(k, parsed.data[k]);
+      }
+    });
     showToast('Backup restored successfully!');
-    setTimeout(() => location.reload(), 1200);
-  }catch(e){showToast('Restore failed: device storage may be full.', true)}
+    setTimeout(() => location.reload(), 1000);
+  } catch(e){
+    showToast('Restore failed: storage may be full.', true);
+  }
 }
 
-// Version 1.4: cross-references, dictionary and guided study
+// Data sets
+const plans = [
+  { name: '7 Days with Jesus', desc: 'Read key passages about the life, miracles, and words of Jesus.', refs: [['John',1],['Mark',1],['Luke',5],['Matthew',5],['John',3],['John',15],['John',20]] },
+  { name: 'Psalms for Peace', desc: 'A week of quiet reflection, comfort, prayer, and deep rest in God.', refs: [['Psalms',23],['Psalms',27],['Psalms',46],['Psalms',91],['Psalms',121],['Psalms',139],['Psalms',150]] },
+  { name: 'Foundations of Faith', desc: 'Seven foundational chapters shaping the biblical grand narrative.', refs: [['Genesis',1],['Genesis',12],['Exodus',20],['Psalms',1],['Isaiah',53],['Romans',8],['Ephesians',2]] }
+];
+
+const studyTopics = [
+  { name: 'Prayer', desc: 'Approaching the throne of grace with confidence and petitions.', refs: [['Matthew',6,9],['Philippians',4,6],['1 Thessalonians',5,17]] },
+  { name: 'Faith', desc: 'Trusting God and walking by convictions rooted in Scripture.', refs: [['Hebrews',11,1],['Romans',10,17],['James',2,17]] },
+  { name: 'Forgiveness', desc: 'Extending Christ’s boundless forgiveness to one another.', refs: [['Matthew',6,14],['Ephesians',4,32],['Colossians',3,13]] },
+  { name: 'Peace & Anxiety', desc: 'Casting every burden on Him and guarding hearts with peace.', refs: [['Philippians',4,6],['John',14,27],['Psalms',23,1]] },
+  { name: 'Love', desc: 'The supreme Christian virtue reflected in action and truth.', refs: [['1 Corinthians',13,4],['John',13,34],['1 John',4,7]] },
+  { name: 'Wisdom', desc: 'Navigating life with godly discernment and reverent understanding.', refs: [['Proverbs',3,5],['James',1,5],['Proverbs',4,7]] },
+  { name: 'Marriage & Family', desc: 'Reflecting covenant love, service, and nurture in the home.', refs: [['Genesis',2,24],['Ephesians',5,25],['1 Corinthians',13,4]] },
+  { name: 'The Holy Spirit', desc: 'The Comforter, power for witness, and spiritual fruit.', refs: [['John',14,26],['Acts',1,8],['Galatians',5,22]] },
+  { name: 'Salvation by Grace', desc: 'Redemption accomplished by Christ and received by faith alone.', refs: [['John',3,16],['Romans',10,9],['Ephesians',2,8]] }
+];
+
 const crossReferenceData = {
   'Genesis 1:1': [['John',1,1],['Psalms',33,6],['Hebrews',11,3]],
   'Genesis 1:27': [['Genesis',5,2],['Matthew',19,4],['James',3,9]],
@@ -745,64 +2207,50 @@ const crossReferenceData = {
 };
 
 const bibleDictionary = [
-  ['Abraham','A patriarch whose story emphasizes trust in God and the covenant promise (Genesis 12–25).'],
-  ['Covenant','A solemn relationship or promise established by God. Key examples include God’s promises to Abraham and the new covenant in Christ.'],
-  ['Disciple','A learner or follower. In the Gospels, Jesus’ disciples learn from him and are sent to share his teaching.'],
-  ['Faith','Trust and reliance on God. Hebrews 11 describes faith in relation to hope and confidence in what is not seen.'],
-  ['Grace','God’s undeserved favour and kindness. The New Testament often connects grace with salvation and new life.'],
-  ['Gospel','“Good news”; especially the good news of Jesus Christ, his kingdom, death and resurrection.'],
-  ['Holy Spirit','The Spirit of God, who teaches, empowers, comforts and guides God’s people (John 14–16; Acts 1–2).'],
-  ['Justification','Being declared righteous before God. Paul discusses justification by faith in Romans and Galatians.'],
-  ['Kingdom of God','God’s reign and rule. Jesus teaches about the kingdom through preaching, actions and parables.'],
-  ['Mercy','Compassion shown to someone in need or distress. Scripture repeatedly calls God’s people to practise mercy.'],
-  ['Messiah','The Anointed One; a title Christians use for Jesus as the promised king and deliverer.'],
-  ['Parable','A short story or comparison used to communicate a spiritual or moral truth, often found in Jesus’ teaching.'],
-  ['Redemption','Deliverance or release, often at a cost. The New Testament uses this language for God’s saving work through Christ.'],
-  ['Repentance','A turning from sin toward God, involving a change of mind and direction. See Acts 3:19.'],
-  ['Righteousness','What is right in God’s sight; Scripture discusses God’s righteousness and the righteous life of believers.'],
-  ['Salvation','God’s rescue from sin and its consequences, centred in the biblical story on Jesus Christ.'],
-  ['Sanctification','Being set apart for God and growing in holiness. The New Testament connects it with the work of the Spirit.'],
-  ['Wisdom','The ability to live rightly according to God’s truth. Proverbs and James contain extensive teaching on wisdom.'],
-  ['Worship','Honouring God in reverence, praise, obedience and the offering of one’s life (Romans 12:1).'],
-  ['Apostle','A person sent with a commission. The New Testament especially uses the title for Jesus’ appointed messengers.']
-].sort((a,b)=>a[0].localeCompare(b[0]));
+  ['Abraham','A patriarch whose life exemplifies covenant trust and the foundational promises of God (Genesis 12–25).'],
+  ['Apostle','One sent with official authority to proclaim the gospel of Jesus Christ.'],
+  ['Covenant','A binding, sacred relationship or pledge established by God with humanity.'],
+  ['Disciple','A follower and pupil who walks in the way, teachings, and obedience of Jesus.'],
+  ['Faith','Substance of things hoped for, trust and confidence in God even when unseen (Hebrews 11:1).'],
+  ['Gospel','The proclamation of the good news: the kingdom, death, and resurrection of Jesus Christ.'],
+  ['Grace','The unmerited favor, kindness, and saving mercy of God given freely to sinners.'],
+  ['Holy Spirit','The third Person of the Trinity who convicts, comforts, guides, and seals believers.'],
+  ['Justification','The forensic act of God declaring a believer righteous solely through faith in Christ.'],
+  ['Kingdom of God','The sovereign reign and sphere of God’s rule, inaugurated in Christ and to be consummated.'],
+  ['Mercy','God’s compassionate withholding of deserved punishment and help to the needy.'],
+  ['Messiah','The Anointed King and promised deliverer of Israel, fulfilled in Jesus of Nazareth.'],
+  ['Parable','An earthly illustration conveying heavenly truth in Jesus’ preaching.'],
+  ['Redemption','Deliverance secured through payment, specifically Christ’s sacrifice on the cross.'],
+  ['Repentance','A heartfelt turning away from sin toward God in renewed mind and life.'],
+  ['Righteousness','Conformity to God’s holy standard, imputed to believers through Jesus Christ.'],
+  ['Salvation','Deliverance from the penalty, power, and ultimate presence of sin through Jesus.'],
+  ['Sanctification','The ongoing work of the Holy Spirit conforming the believer to the image of Christ.'],
+  ['Wisdom','Living skillfully and righteously according to the fear of the Lord (Proverbs 1:7).'],
+  ['Worship','The reverent adoration, praise, and life surrendered in devotion to God alone.']
+].sort((a,b) => a[0].localeCompare(b[0]));
 
-function renderReferenceButton(ref){return '<button class="action-btn secondary" onclick="goToVerse('+JSON.stringify(ref[0])+','+ref[1]+','+ref[2]+')">'+escapeHtml(ref[0]+' '+ref[1]+':'+ref[2])+'</button>'}
-function showCrossReferences(){
-  stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');
-  const options=Object.keys(crossReferenceData).sort();
-  panel.innerHTML='<h2>🔗 Scripture cross-references</h2><p class="muted">Explore related passages. These curated links are a starting point; read each verse in its wider chapter context.</p><label for="xrefSearch">Find a reference</label><input id="xrefSearch" placeholder="e.g. John 3:16 or faith" oninput="filterCrossReferences()"><div id="xrefResults">'+crossReferenceCards(options)+'</div>';
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function crossReferenceCards(keys){return keys.map(key=>{const m=key.match(/^(.*) (\d+):(\d+)$/),ref=[m[1],+m[2],+m[3]],text=verseText(...ref);return '<article class="saved-item"><strong>'+escapeHtml(key)+'</strong><p>'+escapeHtml(text||'Open this passage to read it.')+'</p><div class="tool-buttons">'+renderReferenceButton(ref)+crossReferenceData[key].map(renderReferenceButton).join('')+'</div></article>'}).join('')||'<div class="empty-state">No matching cross-references. Try a Bible reference such as John 3:16.</div>'}
-function filterCrossReferences(){const q=(document.getElementById('xrefSearch').value||'').trim().toLowerCase();const keys=Object.keys(crossReferenceData).filter(k=>{const all=[k,...crossReferenceData[k].map(r=>r.join(' ')),...crossReferenceData[k].map(r=>r[0]+' '+r[1]+':'+r[2])].join(' ').toLowerCase();return all.includes(q)}).sort();document.getElementById('xrefResults').innerHTML=crossReferenceCards(keys)}
-function showBibleDictionary(){
-  stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');
-  panel.innerHTML='<h2>📚 Bible dictionary</h2><p class="muted">Short study definitions to help you read in context. These are introductory summaries, not a substitute for a full Bible dictionary.</p><input id="dictSearch" placeholder="Search a word or topic…" oninput="filterBibleDictionary()"><div id="dictResults">'+dictionaryCards(bibleDictionary)+'</div>';
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function dictionaryCards(items){return items.map(([term,definition])=>'<article class="saved-item"><strong>'+escapeHtml(term)+'</strong><p>'+escapeHtml(definition)+'</p></article>').join('')||'<div class="empty-state">No dictionary entry found. Try another word.</div>'}
-function filterBibleDictionary(){const q=(document.getElementById('dictSearch').value||'').trim().toLowerCase();document.getElementById('dictResults').innerHTML=dictionaryCards(bibleDictionary.filter(([t,d])=>(t+' '+d).toLowerCase().includes(q)))}
-function showStudyGuide(){
-  stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');
-  const bi=Number(document.getElementById('bookSel').value||0),ch=Number(document.getElementById('chapSel').value||1),book=books[bi];
-  panel.innerHTML='<h2>🧠 Guided Bible study</h2><p class="muted">Use this offline worksheet to study a passage carefully. It helps you observe the text, interpret it in context and apply it thoughtfully.</p><label for="studyReference">Passage</label><input id="studyReference" value="'+escapeHtml(book?book.n+' '+ch:'John 3')+'"><label for="studyObservation">1. Observation — What does the passage say?</label><textarea id="studyObservation" rows="3" placeholder="Repeated words, people, events, commands…"></textarea><label for="studyMeaning">2. Interpretation — What did it mean in context?</label><textarea id="studyMeaning" rows="3" placeholder="Read the surrounding verses and note the main idea…"></textarea><label for="studyApplication">3. Application — What response is appropriate today?</label><textarea id="studyApplication" rows="3" placeholder="A practical response, not just a general idea…"></textarea><label for="studyPrayer">4. Prayer</label><textarea id="studyPrayer" rows="3" placeholder="Respond to God in prayer…"></textarea><button class="action-btn" onclick="saveStudyWorksheet()">Save study notes</button><button class="action-btn secondary" onclick="showSavedStudies()">View saved studies</button><p class="muted">Saved on this device. Export a backup regularly to avoid losing your work.</p>';
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function saveStudyWorksheet(){const reference=(document.getElementById('studyReference').value||'').trim();if(!reference){showToast('Enter the Bible passage first.', true);return}const all=readStore('rb-study-worksheets'),id='study-'+Date.now();all[id]={reference,observation:document.getElementById('studyObservation').value.trim(),meaning:document.getElementById('studyMeaning').value.trim(),application:document.getElementById('studyApplication').value.trim(),prayer:document.getElementById('studyPrayer').value.trim(),updatedAt:Date.now()};writeStore('rb-study-worksheets',all);showToast('Study notes saved on this device.');showSavedStudies()}
-function showSavedStudies(){const panel=document.getElementById('utilityPanel'),all=readStore('rb-study-worksheets');panel.classList.remove('hidden');const entries=Object.entries(all).sort((a,b)=>(b[1].updatedAt||0)-(a[1].updatedAt||0));panel.innerHTML='<h2>🧠 My saved Bible studies</h2>'+(entries.length?entries.map(([id,x])=>'<article class="saved-item"><strong>'+escapeHtml(x.reference)+'</strong><p><b>Observation:</b> '+escapeHtml(x.observation||'—')+'</p><p><b>Interpretation:</b> '+escapeHtml(x.meaning||'—')+'</p><p><b>Application:</b> '+escapeHtml(x.application||'—')+'</p><p><b>Prayer:</b> '+escapeHtml(x.prayer||'—')+'</p><button class="action-btn secondary" onclick="deleteStudyWorksheet('+JSON.stringify(id)+')">Delete</button></article>').join(''):'<div class="empty-state">No saved studies yet. Start a guided study to record your observations.</div>')+'<button class="action-btn secondary" onclick="showStudyGuide()">＋ New study</button>';panel.scrollIntoView({behavior:'smooth',block:'start'})}
-function deleteStudyWorksheet(id){
-  const all=readStore('rb-study-worksheets');
-  delete all[id];
-  writeStore('rb-study-worksheets',all);
-  showToast('Study notes deleted');
-  showSavedStudies();
-}
+function initPersonalTools() {
+  try {
+    if (localStorage.getItem('rb-dark') === '1') {
+      document.body.classList.add('dark');
+    }
+    const fs = localStorage.getItem('rb-font') || '18';
+    setFontSize(fs);
+  } catch(e) {}
 
-function initPersonalTools(){try{if(localStorage.getItem('rb-dark')==='1'){document.body.classList.add('dark');document.getElementById('themeBtn').textContent='☀️ Light mode'}const fs=localStorage.getItem('rb-font')||'18';document.getElementById('fontSize').value=fs;setFontSize(fs)}catch(e){}const refs=[];books.forEach(b=>b.c.forEach((vs,ci)=>vs.forEach((text,vi)=>refs.push({book:b.n,ch:ci+1,v:vi+1,text}))));if(refs.length){const day=Math.floor(Date.now()/86400000),x=refs[(day*7919)%refs.length];document.getElementById('dailyText').textContent='“'+x.text+'”';document.getElementById('dailyRef').textContent=x.book+' '+x.ch+':'+x.v}document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchBible()});updateDashboard()}
+  const refs = [];
+  books.forEach(b => b.c.forEach((vs, ci) => vs.forEach((text, vi) => refs.push({ book: b.n, ch: ci + 1, v: vi + 1, text }))));
+  if (refs.length) {
+    const day = Math.floor(Date.now() / 86400000);
+    const x = refs[(day * 7919) % refs.length];
+    document.getElementById('dailyText').textContent = '“' + x.text + '”';
+    document.getElementById('dailyRef').textContent = x.book + ' ' + x.ch + ':' + x.v;
+  }
+  updateDashboard();
+}
 
 init().catch(err => {
-  document.getElementById("loading").textContent = "Could not load the Bible text. Check your connection and reload. (" + err + ")";
+  document.getElementById("loading").textContent = "Could not load the Bible text: " + err;
 });
 </script>
 
