@@ -1020,8 +1020,7 @@
   </button>
 </nav>
 
-<script src="/bible-data.js"></script>
-<script src="/preloaded-comm.js"></script>
+<script src="/preloaded-comm.js" defer></script>
 <script>
 const DATA_URL = "https://base44.app/api/apps/6a0b28c046523946b4de86ae/files/mp/public/6a0b28c046523946b4de86ae/57c32b5f2_bible-kjv.json";
 const COMMENTARY_URL = "https://base44.app/api/apps/6a0b28c046523946b4de86ae/functions/getCommentaryList";
@@ -1055,15 +1054,36 @@ function gatewayUrl(book, ch, v) {
 }
 
 function esc(s) {
-  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return String(s || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function escapeHtml(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 function orderOf(bookIdx, chap) {
   return chapterStartOrder[bookIdx] + chap - 1;
+}
+
+// Storage helpers
+function readStore(key, defaultValue = {}) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw || typeof raw !== 'string') return defaultValue;
+    const trimmed = raw.trim();
+    if (!trimmed) return defaultValue;
+    return JSON.parse(trimmed);
+  } catch (e) {
+    return defaultValue;
+  }
+}
+
+function writeStore(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    showToast('Device storage is full. Please remove some saved items.', true);
+  }
 }
 
 // Tab Switching System
@@ -1092,12 +1112,52 @@ function switchTab(tabId) {
   }
 }
 
+async function loadBibleData() {
+  if (window.BIBLE_DATA && window.BIBLE_DATA.b && Array.isArray(window.BIBLE_DATA.b)) {
+    return window.BIBLE_DATA;
+  }
+  // 1. Try local JSON first
+  try {
+    const res = await fetch('/bible-data.json');
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.trim()) {
+        const json = JSON.parse(text);
+        if (json && json.b && Array.isArray(json.b)) {
+          window.BIBLE_DATA = json;
+          return json;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Local bible-data.json fetch failed:', err);
+  }
+
+  // 2. Fallback to DATA_URL
+  try {
+    const res = await fetch(DATA_URL);
+    if (res.ok) {
+      const text = await res.text();
+      if (text && text.trim()) {
+        const json = JSON.parse(text);
+        if (json && json.b && Array.isArray(json.b)) {
+          window.BIBLE_DATA = json;
+          return json;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Remote DATA_URL fetch failed:', err);
+  }
+
+  throw new Error('Scripture text is temporarily unavailable. Please check your network.');
+}
+
 async function init() {
-  const [dataRes, commRes] = await Promise.all([
-    window.BIBLE_DATA ? Promise.resolve({ json: async () => window.BIBLE_DATA }) : fetch(DATA_URL),
+  const [data, commRes] = await Promise.all([
+    loadBibleData(),
     fetch(COMMENTARY_URL).catch(() => null)
   ]);
-  const data = await dataRes.json();
   books = data.b;
   initPersonalTools();
 
@@ -1110,15 +1170,21 @@ async function init() {
 
   if (commRes && commRes.ok) {
     try {
-      const comm = await commRes.json();
-      commentaryCount = comm.count || 0;
-      for (const c of (comm.chapters || [])) commentaryByOrder[c.order] = c;
-      try { localStorage.setItem("rb-list", JSON.stringify(comm)); } catch (e) {}
+      const text = await commRes.text();
+      if (text && text.trim()) {
+        const comm = JSON.parse(text);
+        commentaryCount = comm.count || 0;
+        for (const c of (comm.chapters || [])) commentaryByOrder[c.order] = c;
+        try { localStorage.setItem("rb-list", JSON.stringify(comm)); } catch (e) {}
+      }
     } catch (e) { /* ignore */ }
   } else {
     offlineMode = true;
     let comm = null;
-    try { comm = JSON.parse(localStorage.getItem("rb-list") || "null"); } catch (e) {}
+    try {
+      const stored = localStorage.getItem("rb-list");
+      if (stored && stored.trim()) comm = JSON.parse(stored);
+    } catch (e) {}
     if (!comm && window.PRELOADED_COMM) {
       comm = window.PRELOADED_COMM;
       try {
@@ -1154,7 +1220,7 @@ async function init() {
     if (qChap >= 1 && qChap <= books[bi].c.length) ch = qChap;
   } else {
     try {
-      const saved = JSON.parse(localStorage.getItem("twe-pos") || "{}");
+      const saved = readStore("twe-pos", {});
       if (saved.bi !== undefined && books[saved.bi]) { bi = saved.bi; ch = saved.ch || 1; }
     } catch (e) {}
   }
@@ -1340,7 +1406,7 @@ function render(bi, ch) {
 
   for (let v = 1; v <= verses.length; v++) {
     const badge = esc(book.n).toUpperCase() + " " + ch + ":" + v;
-    html += '<details class="vblock" data-book="' + esc(book.n) + '" data-ch="' + ch + '" data-v="' + v + '">' +
+    html += '<details class="vblock" data-book="' + escapeHtml(book.n) + '" data-ch="' + ch + '" data-v="' + v + '">' +
       '<summary>' +
         '<div class="summary-header">' +
           '<span class="verse-badge">' + badge + '</span>' +
@@ -1350,10 +1416,10 @@ function render(bi, ch) {
       '</summary>' +
       '<div class="verse-detail-pane">' +
         '<div class="verse-actions-bar">' +
-          '<button class="action-btn" onclick="event.preventDefault();toggleBookmark(\'' + esc(book.n) + '\',' + ch + ',' + v + ',this)">🔖 Save</button>' +
-          '<button class="action-btn secondary" onclick="event.preventDefault();toggleHighlight(this)">✨ Highlight</button>' +
-          '<button class="action-btn secondary" onclick="event.preventDefault();editNote(\'' + esc(book.n) + '\',' + ch + ',' + v + ')">📝 Note</button>' +
-          '<button class="action-btn secondary" onclick="event.preventDefault();shareVerse(\'' + esc(book.n) + '\',' + ch + ',' + v + ')">📤 Share</button>' +
+          '<button class="action-btn btn-bookmark" data-action="save">🔖 Save</button>' +
+          '<button class="action-btn secondary btn-highlight" data-action="highlight">✨ Highlight</button>' +
+          '<button class="action-btn secondary btn-note" data-action="note">📝 Note</button>' +
+          '<button class="action-btn secondary btn-share" data-action="share">📤 Share</button>' +
         '</div>' +
         '<a class="nkjv-pill" href="' + gatewayUrl(book.n, ch, v) + '" target="_blank" rel="noopener">Compare with NKJV &#8599;</a>' +
         '<div class="verse-slot" id="vs-' + (order) + '-' + v + '"></div>' +
@@ -1364,21 +1430,26 @@ function render(bi, ch) {
     html += '<div class="chapter-trailing" id="chtr-' + order + '"></div>';
   }
 
-  document.getElementById("content").innerHTML = html;
+  const contentBox = document.getElementById("content");
+  contentBox.innerHTML = html;
+  setupContentDelegation();
+
   try {
-    const visited = JSON.parse(localStorage.getItem('rb-visited') || '[]');
+    const visited = readStore('rb-visited', []);
     const key = book.n + ' ' + ch;
-    if (!visited.includes(key)) visited.push(key);
-    localStorage.setItem('rb-visited', JSON.stringify(visited));
+    if (!visited.includes(key)) {
+      visited.push(key);
+      writeStore('rb-visited', visited);
+    }
     updateDashboard();
+    const b = readStore('rb-bookmarks', {});
+    const h = readStore('rb-highlights', {});
     document.querySelectorAll('.vblock').forEach(d => {
       const ref = d.dataset.book + ' ' + d.dataset.ch + ':' + d.dataset.v;
-      const b = JSON.parse(localStorage.getItem('rb-bookmarks') || '{}');
       if (b[ref]) {
-        const btn = d.querySelector('.verse-actions-bar .action-btn');
+        const btn = d.querySelector('.btn-bookmark');
         if (btn) btn.textContent = '✓ Saved';
       }
-      const h = JSON.parse(localStorage.getItem('rb-highlights') || '{}');
       if (h[ref]) d.classList.add('is-highlighted');
     });
   } catch(e) {}
@@ -1479,14 +1550,34 @@ function showWritten(slot, ref, content, order, v) {
   }
 }
 
-// Personal study tools
-function readStore(key){try{return JSON.parse(localStorage.getItem(key)||'{}')}catch(e){return {}}}
-function writeStore(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(e){showToast('Device storage is full. Please remove some saved items.', true)}}
+// Verse Event Delegation
+function setupContentDelegation() {
+  const content = document.getElementById('content');
+  if (!content || content._hasDelegation) return;
+  content._hasDelegation = true;
+  content.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const block = btn.closest('.vblock');
+    if (!block) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const book = block.dataset.book;
+    const ch = parseInt(block.dataset.ch, 10);
+    const v = parseInt(block.dataset.v, 10);
+    const action = btn.dataset.action;
+    if (action === 'save') toggleBookmark(book, ch, v, btn);
+    else if (action === 'highlight') toggleHighlight(btn);
+    else if (action === 'note') editNote(book, ch, v);
+    else if (action === 'share') shareVerse(book, ch, v);
+  });
+}
+
 function verseText(book,ch,v){const b=books.find(x=>x.n===book);return b&&b.c[ch-1]?b.c[ch-1][v-1]||'':''}
 function refKey(book,ch,v){return book+' '+ch+':'+v}
 
 function toggleBookmark(book,ch,v,btn){
-  const all=readStore('rb-bookmarks'),ref=refKey(book,ch,v);
+  const all=readStore('rb-bookmarks',{}),ref=refKey(book,ch,v);
   if(all[ref]){
     delete all[ref];
     if(btn)btn.textContent='🔖 Save';
@@ -1501,7 +1592,7 @@ function toggleBookmark(book,ch,v,btn){
 }
 
 function toggleHighlight(btn){
-  const d=btn.closest('details'),ref=refKey(d.dataset.book,+d.dataset.ch,+d.dataset.v),all=readStore('rb-highlights');
+  const d=btn.closest('details'),ref=refKey(d.dataset.book,+d.dataset.ch,+d.dataset.v),all=readStore('rb-highlights',{});
   if(all[ref]){
     delete all[ref];
     d.classList.remove('is-highlighted');
@@ -1519,7 +1610,7 @@ function toggleHighlight(btn){
 function editNote(book, ch, v) {
   stopReadingAloud();
   const ref = refKey(book, ch, v);
-  const all = readStore('rb-notes');
+  const all = readStore('rb-notes', {});
   const existing = all[ref] ? all[ref].note || '' : '';
   
   switchTab('library');
@@ -1532,11 +1623,17 @@ function editNote(book, ch, v) {
     '<label class="form-label" for="noteText">Personal Reflection</label>' +
     '<textarea id="noteText" class="form-control" rows="5" placeholder="Write your thoughts, applications, or insights on this verse...">' + escapeHtml(existing) + '</textarea>' +
     '<div style="display:flex;gap:8px">' +
-      '<button class="action-btn" onclick="saveNote(' + JSON.stringify(book) + ',' + ch + ',' + v + ')">Save Note</button>' +
-      (existing ? '<button class="action-btn secondary" onclick="deleteNote(' + JSON.stringify(book) + ',' + ch + ',' + v + ')">Delete Note</button>' : '') +
-      '<button class="action-btn secondary" onclick="setLibSubTab(\'notes\')">Cancel</button>' +
+      '<button class="action-btn" id="btnSaveNote">Save Note</button>' +
+      (existing ? '<button class="action-btn secondary" id="btnDeleteNote">Delete Note</button>' : '') +
+      '<button class="action-btn secondary" id="btnCancelNote">Cancel</button>' +
     '</div>' +
   '</div>';
+
+  document.getElementById('btnSaveNote').onclick = () => saveNote(book, ch, v);
+  const delBtn = document.getElementById('btnDeleteNote');
+  if (delBtn) delBtn.onclick = () => deleteNote(book, ch, v);
+  document.getElementById('btnCancelNote').onclick = () => setLibSubTab('notes');
+
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1873,12 +1970,12 @@ function saveStudyWorksheet(){
 }
 function showSavedStudies(){
   const pane = document.getElementById('studyContentPane');
-  const all = readStore('rb-study-worksheets');
+  const all = readStore('rb-study-worksheets', {});
   const entries = Object.entries(all).sort((a,b) => (b[1].updatedAt||0) - (a[1].updatedAt||0));
   pane.innerHTML = '<div class="panel-card">' +
     '<h2>🧠 My Saved Bible Studies</h2>' +
     '<div style="margin-bottom:12px">' +
-      '<button class="action-btn secondary" onclick="renderStudySubTab(\'guide\')">← New Study Worksheet</button>' +
+      '<button class="action-btn secondary" id="btnNewStudy">← New Study Worksheet</button>' +
     '</div>' +
     (entries.length ? entries.map(([id, x]) => '<div class="item-card">' +
       '<strong>' + escapeHtml(x.reference) + '</strong>' +
@@ -1886,12 +1983,17 @@ function showSavedStudies(){
       '<p><b>Interpretation:</b> ' + escapeHtml(x.meaning || '—') + '</p>' +
       '<p><b>Application:</b> ' + escapeHtml(x.application || '—') + '</p>' +
       '<p><b>Prayer:</b> ' + escapeHtml(x.prayer || '—') + '</p>' +
-      '<button class="action-btn secondary" onclick="deleteStudyWorksheet(' + JSON.stringify(id) + ')">Delete</button>' +
+      '<button class="action-btn secondary" data-del-study="' + escapeHtml(id) + '">Delete</button>' +
     '</div>').join('') : '<div class="empty-state">No study worksheets saved yet. Start a new study to record your insights.</div>') +
   '</div>';
+  const newBtn = document.getElementById('btnNewStudy');
+  if (newBtn) newBtn.onclick = () => renderStudySubTab('guide');
+  pane.querySelectorAll('[data-del-study]').forEach(btn => {
+    btn.onclick = () => deleteStudyWorksheet(btn.getAttribute('data-del-study'));
+  });
 }
 function deleteStudyWorksheet(id){
-  const all = readStore('rb-study-worksheets');
+  const all = readStore('rb-study-worksheets', {});
   delete all[id];
   writeStore('rb-study-worksheets', all);
   showToast('Study notes deleted');
@@ -2011,7 +2113,7 @@ function savePrayer() {
 }
 
 function editPrayer(id) {
-  const all = readStore('rb-prayers'), x = all[id];
+  const all = readStore('rb-prayers', {}), x = all[id];
   if (!x) return;
   const pane = document.getElementById('libraryContentPane');
   pane.innerHTML = '<div class="panel-card">' +
@@ -2022,10 +2124,14 @@ function editPrayer(id) {
     '<textarea id="prayerBody" class="form-control" rows="4">' + escapeHtml(x.body || '') + '</textarea>' +
     '<div style="margin-bottom:12px"><label style="display:inline-flex;align-items:center;gap:6px;font-size:0.9rem;cursor:pointer"><input id="prayerAnswered" type="checkbox" ' + (x.answered ? 'checked' : '') + '> Mark as answered prayer</label></div>' +
     '<div style="display:flex;gap:8px">' +
-      '<button class="action-btn" onclick="updatePrayer(' + JSON.stringify(id) + ')">Update Prayer</button>' +
-      '<button class="action-btn secondary" onclick="renderLibSubTab(\'prayers\')">Cancel</button>' +
+      '<button class="action-btn" id="btnUpdatePrayer">Update Prayer</button>' +
+      '<button class="action-btn secondary" id="btnCancelPrayer">Cancel</button>' +
     '</div>' +
   '</div>';
+  const updateBtn = document.getElementById('btnUpdatePrayer');
+  if (updateBtn) updateBtn.onclick = () => updatePrayer(id);
+  const cancelBtn = document.getElementById('btnCancelPrayer');
+  if (cancelBtn) cancelBtn.onclick = () => renderLibSubTab('prayers');
 }
 
 function updatePrayer(id) {
@@ -2238,13 +2344,32 @@ function initPersonalTools() {
     setFontSize(fs);
   } catch(e) {}
 
-  const refs = [];
-  books.forEach(b => b.c.forEach((vs, ci) => vs.forEach((text, vi) => refs.push({ book: b.n, ch: ci + 1, v: vi + 1, text }))));
-  if (refs.length) {
+  if (books && books.length) {
     const day = Math.floor(Date.now() / 86400000);
-    const x = refs[(day * 7919) % refs.length];
-    document.getElementById('dailyText').textContent = '“' + x.text + '”';
-    document.getElementById('dailyRef').textContent = x.book + ' ' + x.ch + ':' + x.v;
+    const inspiring = [
+      { book: 'John', ch: 3, v: 16 },
+      { book: 'Psalms', ch: 23, v: 1 },
+      { book: 'Romans', ch: 8, v: 28 },
+      { book: 'Proverbs', ch: 3, v: 5 },
+      { book: 'Philippians', ch: 4, v: 13 },
+      { book: 'Isaiah', ch: 40, v: 31 },
+      { book: 'Jeremiah', ch: 29, v: 11 },
+      { book: 'Matthew', ch: 11, v: 28 },
+      { book: 'Psalms', ch: 46, v: 1 },
+      { book: '2 Corinthians', ch: 5, v: 17 },
+      { book: 'Galatians', ch: 5, v: 22 },
+      { book: 'Ephesians', ch: 2, v: 8 },
+      { book: 'Hebrews', ch: 11, v: 1 },
+      { book: 'James', ch: 1, v: 5 },
+      { book: '1 Peter', ch: 5, v: 7 }
+    ];
+    const pick = inspiring[day % inspiring.length];
+    const bObj = books.find(x => x.n === pick.book);
+    const txt = bObj && bObj.c[pick.ch - 1] ? bObj.c[pick.ch - 1][pick.v - 1] : '';
+    if (txt) {
+      document.getElementById('dailyText').textContent = '“' + txt + '”';
+      document.getElementById('dailyRef').textContent = pick.book + ' ' + pick.ch + ':' + pick.v;
+    }
   }
   updateDashboard();
 }
