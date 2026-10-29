@@ -1,0 +1,8 @@
+{
+  "name": "RonaldBible",
+  "description": "Read Scripture, topical studies, cross-references, Bible dictionary, prayer journal, and commentaries with RonaldBible.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

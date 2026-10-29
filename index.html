@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RonaldBible</title>
+<meta name="description" content="Read Scripture, topical studies, cross-references, Bible dictionary, prayer journal, and commentaries with RonaldBible.">
+<meta property="og:title" content="RonaldBible">
+<meta property="og:description" content="Read Scripture, topical studies, cross-references, Bible dictionary, prayer journal, and commentaries with RonaldBible.">
+<style>
+  body { font-family: Georgia, 'Times New Roman', serif; max-width: 760px; margin: 0 auto; padding: 20px 16px 60px; line-height: 1.65; color: #222; background: #faf9f6; }
+  h1 { font-size: 1.6em; text-align: center; margin-bottom: 4px; }
+  .subtitle { text-align: center; color: #666; font-style: italic; margin-top: 0; }
+  .nav { background: #fff; border: 1px solid #d8d4cc; border-radius: 10px; padding: 12px 14px; margin: 16px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+  .nav select { font-family: Georgia, serif; font-size: 1em; padding: 8px; border: 1px solid #2c5f2d; border-radius: 8px; background: #fff; max-width: 45%; }
+  .nav button { font-family: Arial, sans-serif; font-size: 0.9em; padding: 8px 14px; border: none; border-radius: 8px; background: #2c5f2d; color: #fff; cursor: pointer; }
+  .nav button:disabled { background: #b9c4b9; cursor: default; }
+  .commentary-banner { background: #1a5276; color: #fff; border-radius: 10px; padding: 12px 16px; margin: 14px 0; text-align: center; }
+  details { background: #fff; border: 1px solid #d8d4cc; border-radius: 10px; margin: 14px 0; overflow: hidden; }
+  details[open] { border: 2px solid #2c5f2d; }
+  summary { cursor: pointer; padding: 14px 16px; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary .ref-line { display: flex; align-items: center; gap: 8px; }
+  summary .badge { background: #2c5f2d; color: #fff; font-family: Arial, sans-serif; font-size: 0.72em; font-weight: bold; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+  summary .verse-text { display: block; font-style: italic; margin-top: 8px; color: #333; }
+  summary .tap-hint { display: block; font-family: Arial, sans-serif; font-size: 0.72em; color: #1a5276; margin-top: 8px; }
+  details[open] summary .tap-hint { display: none; }
+  .explain { padding: 0 16px 16px; border-top: 1px solid #e4e0d8; margin-top: 0; padding-top: 14px; }
+  .nkjv-link { display: inline-block; font-family: Arial, sans-serif; font-size: 0.82em; background: #1a5276; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: 6px; margin-bottom: 12px; }
+  .pending-note { color: #666; font-size: 0.9em; }
+  .writing-note { color: #1a5276; font-size: 0.9em; font-style: italic; }
+  .verse-commentary { margin-top: 6px; }
+  .verse-commentary .label { font-weight: bold; color: #2c5f2d; }
+  .verse-commentary a.ref, .chapter-overview a.ref, .chapter-trailing a.ref { color: #1a5276; text-decoration: none; border-bottom: 1px dotted #1a5276; white-space: nowrap; }
+  .verse-commentary a.ref:hover, .chapter-overview a.ref:hover, .chapter-trailing a.ref:hover { border-bottom: solid; }
+  .note { background: #fdeeee; border-left: 4px solid #a94442; padding: 10px 14px; font-size: 0.92em; margin: 18px 0; }
+  #loading { text-align: center; padding: 60px 0; color: #2c5f2d; font-style: italic; }
+  .progress-line { text-align: center; color: #555; font-size: 0.9em; margin: 6px 0 0; }
+  a { word-wrap: break-word; }
+  .chapter-overview { background: #fff; border: 1px solid #d8d4cc; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+  .chapter-overview h3, .chapter-trailing h2, .chapter-trailing h3 { color: #2c5f2d; }
+  .chapter-overview .overview { background: #eef4ea; border-radius: 10px; padding: 12px 16px; margin: 12px 0; }
+  .chapter-overview .structure { background: #f6f6f2; border: 1px solid #ccc; border-radius: 8px; padding: 10px 16px; margin: 12px 0; }
+  .chapter-overview blockquote, .chapter-trailing blockquote { border-left: 4px solid #2c5f2d; background: #eef4ea; margin: 12px 0; padding: 12px 16px; font-style: italic; }
+  .chapter-trailing { background: #fff; border: 1px solid #d8d4cc; border-radius: 10px; padding: 14px 18px; margin: 20px 0; }
+  .chapter-trailing .summary { background: #fdf6e3; border: 2px solid #bfa76a; border-radius: 10px; padding: 14px 18px; margin: 14px 0; }
+
+  :root{--bg:#f5f7f2;--card:#fff;--ink:#17231c;--muted:#65736a;--green:#176b45;--green2:#0f5135;--gold:#c89b3c;--line:#dce5dc;--soft:#eaf3ec;--blue:#245b70}
+  *{box-sizing:border-box} body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;max-width:900px;background:var(--bg);color:var(--ink);line-height:1.65;padding:18px 14px 90px;transition:background .2s,color .2s}
+  h1{font-family:Georgia,serif;font-size:clamp(1.7rem,6vw,2.35rem);letter-spacing:-.04em;margin-top:10px;color:var(--green2)} .subtitle{font-style:normal;color:var(--muted);max-width:540px;margin:0 auto 18px}
+  .brand-mark{width:48px;height:48px;border-radius:17px;background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;display:grid;place-items:center;font-size:25px;margin:0 auto 8px;box-shadow:0 8px 20px #176b4528}
+  .dashboard{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin:18px 0}.hero-card,.mini-card,.tools,.nav,.chapter-overview,.chapter-trailing{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 4px 16px #17231c08}
+  .hero-card{padding:18px;background:linear-gradient(135deg,#174d36,#28774e);color:white;position:relative;overflow:hidden}.hero-card .eyebrow{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;opacity:.8}.hero-card .daily-text{font:italic 1.08rem/1.55 Georgia,serif;margin:10px 0}.hero-card .daily-ref{font-weight:700;color:#f5d58b}.hero-card button{background:#f6d88f;color:#263c2e;border:0;border-radius:10px;padding:10px 14px;font-weight:700;margin-top:10px;cursor:pointer}
+  .mini-stack{display:grid;gap:12px}.mini-card{padding:14px;display:flex;flex-direction:column;justify-content:center}.mini-card strong{font-size:1.2rem;color:var(--green)}.mini-card span{font-size:.82rem;color:var(--muted)}
+  .tools{padding:12px;margin:14px 0;display:grid;gap:10px}.search-row{display:flex;gap:8px}.search-row input{flex:1;min-width:0}.tools input,.tools select,.tools textarea,#utilityPanel input:not([type=checkbox]),#utilityPanel textarea{font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--bg);color:var(--ink);width:100%}.tool-buttons{display:flex;flex-wrap:wrap;gap:8px}.tool-buttons button,.action-btn,.nav button{border:0;border-radius:10px;background:var(--green);color:white;padding:9px 12px;font:600 .86rem system-ui;cursor:pointer}.tool-buttons button.secondary,.action-btn.secondary{background:var(--soft);color:var(--green2);border:1px solid var(--line)}
+  .nav{justify-content:space-between;padding:10px;gap:7px}.nav select{font:inherit;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:9px;max-width:34%;flex:1;min-width:0}.nav button{padding:9px 11px}.progress-line{font-size:.82rem;color:var(--muted);text-align:left;margin:8px 2px 14px}
+  details.vblock{background:var(--card);border:1px solid var(--line);border-radius:15px;margin:10px 0;box-shadow:0 2px 8px #17231c05}details[open].vblock{border:1px solid #73a889;box-shadow:0 5px 18px #176b4510}summary{padding:15px 14px}summary .badge{background:var(--soft);color:var(--green2);border-radius:8px;font-size:.76rem;padding:5px 8px}summary .verse-text{font-style:normal;font-family:Georgia,serif;font-size:1.06rem;line-height:1.7;color:var(--ink);margin-top:10px}summary .tap-hint{color:var(--green);font-size:.75rem}.explain{padding:14px;border-top:1px solid var(--line)}.verse-actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}.action-btn{font-size:.78rem;padding:7px 10px}.vblock.is-highlighted summary{background:#fff4cc}.nkjv-link{border-radius:9px}.commentary-banner{border-radius:13px;background:var(--blue)}.note{border:0;border-radius:12px;background:#edf5ef;color:#3e5a48;padding:12px 14px}.chapter-overview,.chapter-trailing{padding:16px}.chapter-overview h3,.chapter-trailing h2,.chapter-trailing h3{color:var(--green)}.chapter-overview .overview,.chapter-overview blockquote,.chapter-trailing blockquote{background:var(--soft);border-radius:12px;border-left-color:var(--green)}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}.panel h2{font-size:1.1rem;margin:0 0 10px}.result-item,.saved-item{padding:11px 0;border-bottom:1px solid var(--line)}.result-item:last-child,.saved-item:last-child{border-bottom:0}.result-item button,.saved-item button{margin:5px 5px 0 0}.muted{color:var(--muted);font-size:.86rem}.empty-state{padding:22px;text-align:center;color:var(--muted)}.hidden{display:none!important}
+  body.dark{--bg:#101813;--card:#18231c;--ink:#e8f0e9;--muted:#a5b4a8;--green:#78c69a;--green2:#9bd9b2;--line:#2d4033;--soft:#21372a;--blue:#214b5b}body.dark .hero-card{background:linear-gradient(135deg,#123b29,#1c5b3a)}body.dark .vblock.is-highlighted summary{background:#4a3b16}body.dark .note{background:#21372a;color:#d1e5d6}
+  @media(max-width:560px){body{padding:12px 10px 70px}.dashboard{grid-template-columns:1fr}.mini-stack{grid-template-columns:1fr 1fr}.hero-card{padding:16px}.nav{flex-wrap:wrap}.nav select{max-width:none}.nav button{flex:1}.search-row{flex-wrap:wrap}.search-row input{flex-basis:100%}}
+
+  /* Toast Notification */
+  .rb-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #176b45;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    z-index: 99999;
+    font-size: 0.9rem;
+    font-weight: 500;
+    max-width: 90%;
+    text-align: center;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .rb-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .rb-toast.error {
+    background: #991b1b;
+  }
+</style>
+</head>
+<body>
+
+<div class="brand-mark" aria-hidden="true">✝</div>
+<h1>RonaldBible</h1>
+<p class="subtitle">Read Scripture. Understand the Word. Grow every day.</p>
+<div class="dashboard" id="dashboard">
+  <section class="hero-card"><div class="eyebrow">✦ Verse for today</div><div class="daily-text" id="dailyText">Loading your daily verse…</div><div class="daily-ref" id="dailyRef"></div><button onclick="openDailyVerse()">Read this passage →</button></section>
+  <div class="mini-stack"><section class="mini-card"><strong id="savedCount">0</strong><span>Saved verses</span></section><section class="mini-card"><strong id="readCount">0</strong><span>Chapters visited</span></section><section class="mini-card"><strong id="streakCount">0 days</strong><span>Reading streak</span></section></div>
+</div>
+<section class="tools" aria-label="Bible tools">
+ <div class="search-row"><input id="searchInput" placeholder="Search the Bible by word or phrase…" aria-label="Search Bible"><button class="action-btn" onclick="searchBible()">Search</button></div>
+ <div class="tool-buttons"><button onclick="showLibrary('bookmarks')">🔖 Bookmarks</button><button class="secondary" onclick="showLibrary('notes')">📝 My notes</button><button class="secondary" onclick="showLibrary('highlights')">✨ Highlights</button><button class="secondary" onclick="showPlans()">📖 Reading plans</button><button class="secondary" onclick="showTopics()">🧭 Topical studies</button><button class="secondary" onclick="showCrossReferences()">🔗 Cross-references</button><button class="secondary" onclick="showBibleDictionary()">📚 Bible dictionary</button><button class="secondary" onclick="showStudyGuide()">🧠 Study guide</button><button class="secondary" onclick="showPrayerJournal()">🙏 Prayer journal</button><button class="secondary" onclick="readCurrentChapter()">🔊 Read aloud</button><button class="secondary" onclick="showBackup()">💾 Backup & restore</button><button class="secondary" onclick="toggleTheme()" id="themeBtn">🌙 Dark mode</button></div>
+ <div class="search-row"><label for="fontSize" class="muted" style="align-self:center;white-space:nowrap">Text size</label><input id="fontSize" type="range" min="16" max="26" value="18" oninput="setFontSize(this.value)" aria-label="Bible text size"></div>
+</section>
+<div id="utilityPanel" class="panel hidden"></div>
+<div id="searchResults" class="panel hidden"></div>
+
+<div id="loading">Loading the whole Bible&hellip;</div>
+
+<div class="nav" id="nav" style="display:none">
+  <button id="prevBtn" onclick="nav(-1)">&#8592; Prev</button>
+  <select id="bookSel" onchange="onBookChange()"></select>
+  <select id="chapSel" onchange="onChapChange()"></select>
+  <button id="nextBtn" onclick="nav(1)">Next &#8594;</button>
+</div>
+<p class="progress-line" id="progressLine"></p>
+<div id="content"></div>
+
+<div id="rb-toast" class="rb-toast" role="alert"></div>
+
+<script src="/bible-data.js"></script>
+<script src="/preloaded-comm.js"></script>
+<script>
+const DATA_URL = "https://base44.app/api/apps/6a0b28c046523946b4de86ae/files/mp/public/6a0b28c046523946b4de86ae/57c32b5f2_bible-kjv.json";
+const COMMENTARY_URL = "https://base44.app/api/apps/6a0b28c046523946b4de86ae/functions/getCommentaryList";
+const TAP_URL = "https://base44.app/api/apps/6a0b28c046523946b4de86ae/functions/verseCommentaryTap";
+let offlineMode = false;
+const GATEWAY = "https://www.biblegateway.com/passage/?search=";
+
+let books = [];
+let chapterStartOrder = [];
+let commentaryByOrder = {};
+let commentaryCount = 0;
+
+// Non-blocking toast to replace window.alert in sandboxed iframes
+function showToast(msg, isError = false) {
+  const toast = document.getElementById('rb-toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.className = 'rb-toast visible' + (isError ? ' error' : '');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.className = 'rb-toast';
+  }, 3500);
+}
+window.alert = showToast;
+
+function gatewayUrl(book, ch, v) {
+  return GATEWAY + encodeURIComponent(book).replace(/%20/g, "+") + "+" + ch + ":" + v + "&version=NKJV";
+}
+
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function orderOf(bookIdx, chap) {
+  return chapterStartOrder[bookIdx] + chap - 1;
+}
+
+async function init() {
+  const [dataRes, commRes] = await Promise.all([
+    window.BIBLE_DATA ? Promise.resolve({ json: async () => window.BIBLE_DATA }) : fetch(DATA_URL),
+    fetch(COMMENTARY_URL).catch(() => null)
+  ]);
+  const data = await dataRes.json();
+  books = data.b;
+  initPersonalTools();
+
+  let o = 0;
+  chapterStartOrder = [];
+  for (const b of books) {
+    chapterStartOrder.push(o + 1);
+    o += b.c.length;
+  }
+
+  if (commRes && commRes.ok) {
+    try {
+      const comm = await commRes.json();
+      commentaryCount = comm.count || 0;
+      for (const c of (comm.chapters || [])) commentaryByOrder[c.order] = c;
+      try { localStorage.setItem("rb-list", JSON.stringify(comm)); } catch (e) {}
+    } catch (e) { /* ignore */ }
+  } else {
+    offlineMode = true;
+    let comm = null;
+    try { comm = JSON.parse(localStorage.getItem("rb-list") || "null"); } catch (e) {}
+    if (!comm && window.PRELOADED_COMM) {
+      comm = window.PRELOADED_COMM;
+      try {
+        localStorage.setItem("rb-list", JSON.stringify({
+          count: comm.count,
+          chapters: (comm.chapters || []).map(c => ({ order: c.order, book: c.book, chapter: c.chapter, url: c.url }))
+        }));
+      } catch (e) {}
+    }
+    if (comm) {
+      commentaryCount = comm.count || (comm.chapters ? comm.chapters.length : 0);
+      for (const c of (comm.chapters || [])) {
+        commentaryByOrder[c.order] = c;
+        if (c.html) { try { localStorage.setItem("rb-chap-" + c.order, c.html); } catch (e) {} }
+      }
+    }
+  }
+
+  const bookSel = document.getElementById("bookSel");
+  books.forEach((b, i) => {
+    const opt = document.createElement("option");
+    opt.value = i; opt.textContent = b.n;
+    bookSel.appendChild(opt);
+  });
+
+  // Starting position: ?book=Name&chapter=N link wins, then saved place, then Genesis 1
+  let bi = 0, ch = 1;
+  const qs = new URLSearchParams(location.search);
+  const qBook = qs.get("book");
+  const qChap = parseInt(qs.get("chapter") || "0", 10);
+  if (qBook) {
+    const idx = books.findIndex(b => b.n.toLowerCase() === qBook.trim().toLowerCase());
+    if (idx !== -1) bi = idx;
+    if (qChap >= 1 && qChap <= books[bi].c.length) ch = qChap;
+  } else {
+    try {
+      const saved = JSON.parse(localStorage.getItem("twe-pos") || "{}");
+      if (saved.bi !== undefined && books[saved.bi]) { bi = saved.bi; ch = saved.ch || 1; }
+    } catch (e) {}
+  }
+
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("nav").style.display = "flex";
+  bookSel.value = bi;
+  fillChapterSel(bi, ch);
+  render(bi, ch);
+}
+
+function fillChapterSel(bi, selChap) {
+  const chapSel = document.getElementById("chapSel");
+  chapSel.innerHTML = "";
+  const n = books[bi].c.length;
+  for (let c = 1; c <= n; c++) {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.textContent = "Chapter " + c;
+    if (commentaryByOrder[orderOf(bi, c)]) opt.textContent += " \u2713";
+    chapSel.appendChild(opt);
+  }
+  chapSel.value = Math.min(selChap || 1, n);
+}
+
+function onBookChange() {
+  const bi = parseInt(document.getElementById("bookSel").value);
+  fillChapterSel(bi, 1);
+  render(bi, 1);
+}
+
+function onChapChange() {
+  const bi = parseInt(document.getElementById("bookSel").value);
+  const ch = parseInt(document.getElementById("chapSel").value);
+  render(bi, ch);
+}
+
+function nav(delta) {
+  let bi = parseInt(document.getElementById("bookSel").value);
+  let ch = parseInt(document.getElementById("chapSel").value);
+  ch += delta;
+  if (ch < 1) { bi -= 1; if (bi < 0) return; ch = books[bi].c.length; }
+  if (ch > books[bi].c.length) { bi += 1; if (bi >= books.length) return; ch = 1; }
+  document.getElementById("bookSel").value = bi;
+  fillChapterSel(bi, ch);
+  render(bi, ch);
+}
+
+// Inline chapter commentary
+const chapterCommCache = new Map();
+
+async function getChapterCommentary(order) {
+  if (chapterCommCache.has(order)) return chapterCommCache.get(order);
+  const meta = commentaryByOrder[order];
+  let result = null;
+  let txt = null;
+  if (meta && meta.url) {
+    try {
+      const res = await fetch(meta.url);
+      txt = await res.text();
+      try { localStorage.setItem("rb-chap-" + order, txt); } catch (e) {}
+    } catch (e) { txt = null; }
+    if (txt === null) { try { txt = localStorage.getItem("rb-chap-" + order); } catch (e) {} }
+    if (txt === null && window.PRELOADED_COMM) {
+      const pc = (window.PRELOADED_COMM.chapters || []).find(c => c.order === order);
+      if (pc && pc.html) txt = pc.html;
+    }
+  }
+  if (txt) {
+    try {
+      const doc = new DOMParser().parseFromString(txt, "text/html");
+      const kids = Array.from(doc.body.children);
+      const isVerseHead = el =>
+        el.classList.contains("verse-head") ||
+        ((el.tagName === "H2" || el.tagName === "H3") && /VERSES?\s+\d+/i.test(el.textContent)) ||
+        el.tagName === "DETAILS";
+      const firstVerse = kids.findIndex(isVerseHead);
+      const overview = firstVerse === -1 ? [] :
+        kids.slice(0, firstVerse).filter(el =>
+          el.tagName !== "H1" && el.tagName !== "STYLE" &&
+          !el.classList.contains("subtitle") && !el.classList.contains("note"));
+      const verses = {};
+      const trailing = [];
+      if (firstVerse !== -1) {
+        let cur = null;
+        for (const el of kids.slice(firstVerse)) {
+          if (el.tagName === "DETAILS") {
+            const badge = el.querySelector("summary .badge");
+            const m = badge ? badge.textContent.match(/(\d+)\s*:\s*(\d+)\s*$/) : null;
+            if (m) {
+              const v = parseInt(m[2], 10);
+              const explain = el.querySelector(".explain") || el;
+              verses[v] = Array.from(explain.children).filter(x => !x.classList.contains("nkjv-link"));
+            }
+            continue;
+          }
+          if (isVerseHead(el)) {
+            const m = el.textContent.match(/VERSES?\s+(\d+)/i);
+            const n = m ? parseInt(m[1], 10) : null;
+            if (n) { cur = n; if (!verses[n]) verses[n] = []; }
+            continue;
+          }
+          if (el.classList.contains("summary") || el.tagName === "HR") cur = null;
+          if (cur !== null && verses[cur]) {
+            if (el.tagName === "BLOCKQUOTE") continue;
+            verses[cur].push(el);
+          } else {
+            trailing.push(el);
+          }
+        }
+      }
+      const usable = Object.keys(verses).length > 0;
+      result = usable ? { overview, verses, trailing } : { overview, verses: {}, trailing };
+    } catch (e) { result = null; }
+  }
+  chapterCommCache.set(order, result);
+  return result;
+}
+
+function fillVerseSlotFromEls(slot, els) {
+  const wrap = document.createElement("div");
+  wrap.className = "verse-commentary";
+  els.forEach(el => wrap.appendChild(document.importNode(el, true)));
+  slot.innerHTML = "";
+  slot.appendChild(wrap);
+}
+
+function fillChapterInline(order, comm) {
+  if (!comm) return;
+  const ov = document.getElementById("chov-" + order);
+  if (ov) {
+    comm.overview.forEach(el => {
+      if (el.textContent.trim()) ov.appendChild(document.importNode(el, true));
+    });
+    if (!ov.textContent.trim()) ov.remove();
+  }
+  const tr = document.getElementById("chtr-" + order);
+  if (tr) {
+    comm.trailing.forEach(el => {
+      if (el.textContent.trim()) tr.appendChild(document.importNode(el, true));
+    });
+    if (!tr.textContent.trim()) tr.remove();
+  }
+  for (const vKey of Object.keys(comm.verses)) {
+    const v = parseInt(vKey, 10);
+    if (!comm.verses[v] || !comm.verses[v].length) continue;
+    const slot = document.getElementById("vs-" + order + "-" + v);
+    if (slot && !slot.querySelector(".verse-commentary")) {
+      fillVerseSlotFromEls(slot, comm.verses[v]);
+    }
+  }
+}
+
+// Rendering
+function render(bi, ch) {
+  markReadingDay();
+  const book = books[bi];
+  const verses = book.c[ch - 1];
+  const order = orderOf(bi, ch);
+  const hasComm = !!commentaryByOrder[order];
+  const totalDone = commentaryCount;
+
+  document.getElementById("prevBtn").disabled = (bi === 0 && ch === 1);
+  document.getElementById("nextBtn").disabled = (bi === books.length - 1 && ch === book.c.length);
+  document.getElementById("progressLine").textContent = totalDone > 0
+    ? totalDone + " of 1,189 chapters have full verse-by-verse commentary (\u2713 = done)"
+    : "Verse-by-verse commentary is being written daily, starting from Genesis";
+
+  try { localStorage.setItem("twe-pos", JSON.stringify({ bi, ch })); } catch (e) {}
+
+  let html = "";
+  if (hasComm) {
+    html += '<div class="commentary-banner">This chapter\'s full commentary is written &mdash; tap any verse to read its context and meaning right here</div>';
+  }
+  if (offlineMode) {
+    html += '<div class="commentary-banner" style="background:#8a6d3b">Offline &mdash; showing commentary saved on this device. New chapters and verse requests need a connection.</div>';
+  }
+  html += '<div class="note"><strong>' + esc(book.n) + ' ' + ch + '</strong> &mdash; King James Version. ' +
+    'Tap any verse: its context and meaning appear here. ' +
+    (hasComm
+      ? 'For this chapter they are already written and appear instantly.'
+      : 'If not written yet, they are written automatically, usually within a minute.') +
+    ' You can also read any verse in the NKJV.</div>';
+
+  if (hasComm) {
+    html += '<div class="chapter-overview" id="chov-' + order + '"></div>';
+  }
+
+  for (let v = 1; v <= verses.length; v++) {
+    const badge = esc(book.n).toUpperCase() + " " + ch + ":" + v;
+    html += '<details class="vblock" data-book="' + esc(book.n) + '" data-ch="' + ch + '" data-v="' + v + '">' +
+      '<summary><span class="ref-line"><span class="badge">' + badge + '</span></span>' +
+      '<span class="verse-text">&ldquo;' + esc(verses[v - 1]) + '&rdquo;</span>' +
+      '<span class="tap-hint">&#9662; Tap for the context and meaning</span></summary>' +
+      '<div class="explain">' +
+      '<div class="verse-actions"><button class="action-btn" onclick="event.preventDefault();toggleBookmark(\'' + esc(book.n) + '\',' + ch + ',' + v + ',this)">🔖 Save</button><button class="action-btn secondary" onclick="event.preventDefault();toggleHighlight(this)">✨ Highlight</button><button class="action-btn secondary" onclick="event.preventDefault();editNote(\'' + esc(book.n) + '\',' + ch + ',' + v + ')">📝 Note</button></div>' +
+      '<a class="nkjv-link" href="' + gatewayUrl(book.n, ch, v) + '" target="_blank" rel="noopener">Read in NKJV &#8599;</a>' +
+      '<div class="verse-slot" id="vs-' + (order) + '-' + v + '"></div>' +
+      '</div></details>';
+  }
+
+  if (hasComm) {
+    html += '<div class="chapter-trailing" id="chtr-' + order + '"></div>';
+  }
+
+  document.getElementById("content").innerHTML = html;
+  try {
+    const visited = JSON.parse(localStorage.getItem('rb-visited') || '[]');
+    const key = book.n + ' ' + ch;
+    if (!visited.includes(key)) visited.push(key);
+    localStorage.setItem('rb-visited', JSON.stringify(visited));
+    updateDashboard();
+    document.querySelectorAll('.vblock').forEach(d => {
+      const ref = d.dataset.book + ' ' + d.dataset.ch + ':' + d.dataset.v;
+      const b = JSON.parse(localStorage.getItem('rb-bookmarks') || '{}');
+      if (b[ref]) d.querySelector('.verse-actions .action-btn').textContent = '✓ Saved';
+      const h = JSON.parse(localStorage.getItem('rb-highlights') || '{}');
+      if (h[ref]) d.classList.add('is-highlighted');
+    });
+  } catch(e) {}
+
+  document.querySelectorAll("details.vblock").forEach(d => {
+    d.addEventListener("toggle", () => {
+      if (d.open) requestVerse(d.dataset.book, parseInt(d.dataset.ch), parseInt(d.dataset.v), order);
+    });
+  });
+
+  if (hasComm) {
+    getChapterCommentary(order).then(comm => {
+      if (comm) fillChapterInline(order, comm);
+    });
+  }
+
+  window.scrollTo(0, 0);
+}
+
+// On-demand verse commentary
+const slotPending = new Set();
+const slotWritten = new Set();
+
+async function requestVerse(book, ch, v, order) {
+  const ref = book + " " + ch + ":" + v;
+  if (slotPending.has(ref) || slotWritten.has(ref)) return;
+  const slot = document.getElementById("vs-" + order + "-" + v);
+  if (!slot) return;
+  if (slot.querySelector(".verse-commentary")) return;
+
+  if (commentaryByOrder[order]) {
+    const comm = await getChapterCommentary(order);
+    const fresh = document.getElementById("vs-" + order + "-" + v);
+    if (fresh && fresh.querySelector(".verse-commentary")) return;
+    if (comm && comm.verses[v] && comm.verses[v].length) {
+      fillVerseSlotFromEls(fresh || slot, comm.verses[v]);
+      slotWritten.add(ref);
+      return;
+    }
+  }
+
+  let savedV = null;
+  try { savedV = localStorage.getItem("rb-v-" + order + "-" + v); } catch (e) {}
+  if (savedV) { showWritten(slot, ref, savedV, order, v); return; }
+
+  slotPending.add(ref);
+
+  try {
+    const res = await fetch(TAP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ book: book, chapter: ch, verse: v })
+    });
+    const data = await res.json();
+
+    if (data.status === "written") {
+      showWritten(slot, ref, data.content, order, v);
+      return;
+    }
+    if (data.status === "busy") {
+      slot.innerHTML = '<p class="writing-note">' + esc(data.message || "The writing queue is full - try again shortly.") + '</p>';
+      slotPending.delete(ref);
+      return;
+    }
+    slot.innerHTML = '<p class="writing-note">The context and meaning of ' + esc(ref) + ' are being written right now &mdash; they will appear here in about a minute. Keep this page open, or tap the verse again later.</p>';
+    pollVerse(book, ch, v, order, ref, 8);
+  } catch (err) {
+    slot.innerHTML = '<p class="writing-note">' + ((navigator.onLine === false || offlineMode)
+      ? "You are offline and this verse is not saved on your device yet. Reconnect and tap it again to request its commentary."
+      : "Could not reach the commentary service. Check your connection and tap the verse again.") + '</p>';
+    slotPending.delete(ref);
+  }
+}
+
+async function pollVerse(book, ch, v, order, ref, triesLeft) {
+  if (triesLeft <= 0) { slotPending.delete(ref); return; }
+  const slot = document.getElementById("vs-" + order + "-" + v);
+  if (!slot) { slotPending.delete(ref); return; }
+  if (!slot.closest("details").open) { slotPending.delete(ref); return; }
+
+  try {
+    const res = await fetch(TAP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ book: book, chapter: ch, verse: v })
+    });
+    const data = await res.json();
+    if (data.status === "written") { showWritten(slot, ref, data.content, order, v); return; }
+  } catch (e) { /* keep polling */ }
+
+  setTimeout(() => pollVerse(book, ch, v, order, ref, triesLeft - 1), 10000);
+}
+
+function showWritten(slot, ref, content, order, v) {
+  slotWritten.add(ref);
+  slotPending.delete(ref);
+  slot.innerHTML = '<div class="verse-commentary">' + content + '</div>';
+  if (order !== undefined && v !== undefined) {
+    try { localStorage.setItem("rb-v-" + order + "-" + v, content); } catch (e) {}
+  }
+}
+
+// Personal study tools
+function readStore(key){try{return JSON.parse(localStorage.getItem(key)||'{}')}catch(e){return {}}}
+function writeStore(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch(e){showToast('Device storage is full. Please remove some saved items.', true)}}
+function verseText(book,ch,v){const b=books.find(x=>x.n===book);return b&&b.c[ch-1]?b.c[ch-1][v-1]||'':''}
+function refKey(book,ch,v){return book+' '+ch+':'+v}
+function toggleBookmark(book,ch,v,btn){const all=readStore('rb-bookmarks'),ref=refKey(book,ch,v);if(all[ref]){delete all[ref];if(btn)btn.textContent='🔖 Save';showToast('Bookmark removed')}else{all[ref]={book,ch,v,text:verseText(book,ch,v),savedAt:Date.now()};if(btn)btn.textContent='✓ Saved';showToast('Verse bookmarked')}writeStore('rb-bookmarks',all);updateDashboard()}
+function toggleHighlight(btn){const d=btn.closest('details'),ref=refKey(d.dataset.book,+d.dataset.ch,+d.dataset.v),all=readStore('rb-highlights');if(all[ref]){delete all[ref];d.classList.remove('is-highlighted');btn.textContent='✨ Highlight';showToast('Highlight removed')}else{all[ref]=true;d.classList.add('is-highlighted');btn.textContent='✓ Highlighted';showToast('Verse highlighted')}writeStore('rb-highlights',all)}
+
+function editNote(book, ch, v) {
+  stopReadingAloud();
+  const ref = refKey(book, ch, v);
+  const all = readStore('rb-notes');
+  const existing = all[ref] ? all[ref].note || '' : '';
+  const panel = document.getElementById('utilityPanel');
+  panel.classList.remove('hidden');
+  panel.innerHTML = '<h2>📝 Study note for ' + escapeHtml(ref) + '</h2>' +
+    '<p class="muted">&ldquo;' + escapeHtml(verseText(book, ch, v)) + '&rdquo;</p>' +
+    '<label class="muted" for="noteText">Your note</label>' +
+    '<textarea id="noteText" rows="4" placeholder="Write your thoughts, cross-references, or reflections on this verse...">' + escapeHtml(existing) + '</textarea>' +
+    '<div class="tool-buttons" style="margin-top:10px">' +
+    '<button class="action-btn" onclick="saveNote(' + JSON.stringify(book) + ',' + ch + ',' + v + ')">Save note</button>' +
+    (existing ? '<button class="action-btn secondary" onclick="deleteNote(' + JSON.stringify(book) + ',' + ch + ',' + v + ')">Delete note</button>' : '') +
+    '<button class="action-btn secondary" onclick="document.getElementById(\'utilityPanel\').classList.add(\'hidden\')">Close</button>' +
+    '</div>';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function saveNote(book, ch, v) {
+  const ref = refKey(book, ch, v);
+  const text = (document.getElementById('noteText').value || '').trim();
+  const all = readStore('rb-notes');
+  if (text) {
+    all[ref] = { book, ch, v, text: verseText(book, ch, v), note: text, updatedAt: Date.now() };
+    writeStore('rb-notes', all);
+    showToast('Note saved for ' + ref);
+  } else {
+    delete all[ref];
+    writeStore('rb-notes', all);
+    showToast('Note deleted');
+  }
+  showLibrary('notes');
+}
+
+function deleteNote(book, ch, v) {
+  const ref = refKey(book, ch, v);
+  const all = readStore('rb-notes');
+  delete all[ref];
+  writeStore('rb-notes', all);
+  showToast('Note deleted');
+  showLibrary('notes');
+}
+
+function updateDashboard(){const b=readStore('rb-bookmarks'),v=readStore('rb-visited');const a=document.getElementById('savedCount'),r=document.getElementById('readCount'),st=document.getElementById('streakCount');if(a)a.textContent=Object.keys(b).length;if(r)r.textContent=Array.isArray(v)?v.length:0;if(st)st.textContent=calculateStreak()+' day'+(calculateStreak()===1?'':'s')}
+function localDayStamp(date){const d=date||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function markReadingDay(){const days=readStore('rb-reading-days');days[localDayStamp()]=true;writeStore('rb-reading-days',days)}
+function calculateStreak(){const days=readStore('rb-reading-days');let streak=0,d=new Date();if(!days[localDayStamp(d)])d.setDate(d.getDate()-1);while(days[localDayStamp(d)]){streak++;d.setDate(d.getDate()-1);if(streak>4000)break}return streak}
+function setFontSize(value){document.documentElement.style.setProperty('--bible-font',value+'px');document.querySelectorAll('summary .verse-text').forEach(x=>x.style.fontSize=value+'px');try{localStorage.setItem('rb-font',value)}catch(e){}}
+function toggleTheme(){document.body.classList.toggle('dark');const dark=document.body.classList.contains('dark');document.getElementById('themeBtn').textContent=dark?'☀️ Light mode':'🌙 Dark mode';try{localStorage.setItem('rb-dark',dark?'1':'0')}catch(e){}}
+function searchBible(){const q=(document.getElementById('searchInput').value||'').trim().toLowerCase(),box=document.getElementById('searchResults');if(!q){box.classList.remove('hidden');box.innerHTML='<h2>Search Scripture</h2><p class="muted">Enter a word or phrase to search the Bible text included in this app.</p>';return}const hits=[];for(const b of books){for(let ci=0;ci<b.c.length;ci++){for(let vi=0;vi<b.c[ci].length;vi++){const text=b.c[ci][vi];if(text.toLowerCase().includes(q)){hits.push({book:b.n,ch:ci+1,v:vi+1,text});if(hits.length>=100)break}}if(hits.length>=100)break}if(hits.length>=100)break}box.classList.remove('hidden');box.innerHTML='<h2>Search results</h2><p class="muted">'+hits.length+(hits.length===100?' or more':'')+' matches for “'+escapeHtml(q)+'”</p>'+(hits.length?hits.map(x=>'<div class="result-item"><strong>'+escapeHtml(x.book+' '+x.ch+':'+x.v)+'</strong><div>'+escapeHtml(x.text)+'</div><button class="action-btn" onclick="goToVerse('+JSON.stringify(x.book)+','+x.ch+','+x.v+')">Open verse</button></div>').join(''):'<div class="empty-state">No matching verses found. Try a shorter word.</div>')}
+function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function goToVerse(book,ch,v){const bi=books.findIndex(x=>x.n===book);if(bi<0)return;document.getElementById('bookSel').value=bi;fillChapterSel(bi,ch);render(bi,ch);setTimeout(()=>{const d=document.querySelector('details.vblock[data-v="'+v+'"][data-ch="'+ch+'"][data-book="'+CSS.escape(book)+'"]');if(d){d.open=true;d.scrollIntoView({behavior:'smooth',block:'start'})}},60)}
+function showLibrary(kind){stopReadingAloud();const panel=document.getElementById('utilityPanel');const key={'bookmarks':'rb-bookmarks','notes':'rb-notes','highlights':'rb-highlights'}[kind],data=readStore(key);panel.classList.remove('hidden');const entries=Object.entries(data);panel.innerHTML='<h2>'+({'bookmarks':'🔖 Bookmarks','notes':'📝 My study notes','highlights':'✨ Highlighted verses'}[kind])+'</h2>'+(entries.length?entries.map(([ref,x])=>{const item=typeof x==='object'?x:{};return '<div class="saved-item"><strong>'+escapeHtml(ref)+'</strong><div>'+escapeHtml(item.text||verseText(item.book,item.ch,item.v)||'')+'</div>'+(kind==='notes'?'<p>'+escapeHtml(item.note||'')+'</p>':'')+'<button class="action-btn" onclick="goToVerse('+JSON.stringify(item.book||ref.split(' ')[0])+','+(item.ch||+(ref.match(/ (\d+):/)||[])[1]||1)+','+(item.v||+(ref.match(/:(\d+)/)||[])[1]||1)+')">Open</button><button class="action-btn secondary" onclick="removeSaved('+JSON.stringify(key)+','+JSON.stringify(ref)+')">Remove</button></div>'}).join(''):'<div class="empty-state">Nothing saved here yet. Open a verse and use its tools.</div>');panel.scrollIntoView({behavior:'smooth',block:'start'})}
+function removeSaved(key,ref){const data=readStore(key);delete data[ref];writeStore(key,data);const kind=key==='rb-bookmarks'?'bookmarks':key==='rb-notes'?'notes':'highlights';showLibrary(kind);updateDashboard();showToast('Item removed')}
+const plans=[{name:'7 Days with Jesus',desc:'Read selected passages about the life and teaching of Jesus.',refs:[['John',1],['Mark',1],['Luke',5],['Matthew',5],['John',3],['John',15],['John',20]]},{name:'Psalms for Peace',desc:'A week of prayer, comfort, and trust.',refs:[['Psalms',23],['Psalms',27],['Psalms',46],['Psalms',91],['Psalms',121],['Psalms',139],['Psalms',150]]},{name:'Foundations of Faith',desc:'Seven foundational chapters for Bible study.',refs:[['Genesis',1],['Genesis',12],['Exodus',20],['Psalms',1],['Isaiah',53],['Romans',8],['Ephesians',2]]}];
+function showPlans(){stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');panel.innerHTML='<h2>📖 Reading plans</h2><p class="muted">Choose a guided 7-day plan. Your progress is saved on this device.</p>'+plans.map((p,i)=>'<div class="saved-item"><strong>'+escapeHtml(p.name)+'</strong><p class="muted">'+escapeHtml(p.desc)+'</p><button class="action-btn" onclick="openPlan('+i+')">View plan</button></div>').join('');panel.scrollIntoView({behavior:'smooth',block:'start'})}
+function openPlan(i){const p=plans[i],done=readStore('rb-plan-'+i),panel=document.getElementById('utilityPanel');panel.innerHTML='<h2>'+escapeHtml(p.name)+'</h2><p class="muted">Tick days as you finish them.</p>'+p.refs.map((r,d)=>'<div class="saved-item"><label><input type="checkbox" '+(done[d]?'checked':'')+' onchange="markPlan('+i+','+d+',this.checked)"> Day '+(d+1)+': '+escapeHtml(r[0]+' '+r[1])+'</label> <button class="action-btn secondary" onclick="goToVerse('+JSON.stringify(r[0])+','+r[1]+',1)">Read</button></div>').join('')+'<button class="action-btn secondary" onclick="showPlans()">← All plans</button>'}
+function markPlan(i,d,checked){const done=readStore('rb-plan-'+i);if(checked)done[d]=true;else delete done[d];writeStore('rb-plan-'+i,done);showToast(checked ? 'Day marked complete' : 'Day unmarked')}
+function openDailyVerse(){const ref=document.getElementById('dailyRef').textContent;const m=ref.match(/^(.*) (\d+):(\d+)$/);if(m)goToVerse(m[1],+m[2],+m[3])}
+
+// Topical Bible study index
+const studyTopics=[
+{name:'Prayer',desc:'Learning to pray, trust God and bring requests to Him.',refs:[['Matthew',6,9],['Philippians',4,6],['1 Thessalonians',5,17]]},
+{name:'Faith',desc:'Trusting God and growing through His Word.',refs:[['Hebrews',11,1],['Romans',10,17],['James',2,17]]},
+{name:'Forgiveness',desc:'Receiving mercy and extending forgiveness to others.',refs:[['Matthew',6,14],['Ephesians',4,32],['Colossians',3,13]]},
+{name:'Peace and worry',desc:'Turning worry into prayer and resting in God’s peace.',refs:[['Philippians',4,6],['John',14,27],['Psalms',23,1]]},
+{name:'Love',desc:'God’s love and practical love for one another.',refs:[['1 Corinthians',13,4],['John',13,34],['1 John',4,7]]},
+{name:'Wisdom',desc:'Seeking God’s direction and choosing a wise path.',refs:[['Proverbs',3,5],['James',1,5],['Proverbs',4,7]]},
+{name:'Marriage and family',desc:'Commitment, unity, service and love in family life.',refs:[['Genesis',2,24],['Ephesians',5,25],['1 Corinthians',13,4]]},
+{name:'Holy Spirit',desc:'The Helper, spiritual power and the fruit of the Spirit.',refs:[['John',14,26],['Acts',1,8],['Galatians',5,22]]},
+{name:'Salvation',desc:'Grace, faith and the promise of new life in Christ.',refs:[['John',3,16],['Romans',10,9],['Ephesians',2,8]]}
+];
+function showTopics(){stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');panel.innerHTML='<h2>🧭 Topical Bible studies</h2><p class="muted">Choose a theme and explore key passages. These are Scripture reading guides, not a replacement for reading each passage in context.</p>'+studyTopics.map((t,i)=>'<article class="saved-item"><strong>'+escapeHtml(t.name)+'</strong><p class="muted">'+escapeHtml(t.desc)+'</p>'+t.refs.map(r=>'<button class="action-btn secondary" onclick="goToVerse('+JSON.stringify(r[0])+','+r[1]+','+r[2]+')">'+escapeHtml(r[0]+' '+r[1]+':'+r[2])+'</button>').join(' ')+'</article>').join('');panel.scrollIntoView({behavior:'smooth',block:'start'})}
+
+// Prayer journal, speech and backup
+function showPrayerJournal(){stopReadingAloud();const panel=document.getElementById('utilityPanel'),items=readStore('rb-prayers');panel.classList.remove('hidden');const entries=Object.entries(items).sort((a,b)=>(b[1].updatedAt||0)-(a[1].updatedAt||0));panel.innerHTML='<h2>🙏 Prayer journal</h2><p class="muted">Keep private prayer requests, reflections and answered prayers on this device.</p><label class="muted" for="prayerTitle">Title</label><input id="prayerTitle" maxlength="100" placeholder="e.g. Prayer for my family"><label class="muted" for="prayerBody">Prayer or reflection</label><textarea id="prayerBody" rows="4" maxlength="5000" placeholder="Write your prayer here…"></textarea><label><input id="prayerAnswered" type="checkbox"> Mark as answered prayer</label><button class="action-btn" onclick="savePrayer()">Save prayer</button><div style="margin-top:14px"><h3>My entries ('+entries.length+')</h3>'+(entries.length?entries.map(([id,x])=>'<article class="saved-item"><strong>'+escapeHtml(x.title||'Untitled prayer')+'</strong><div class="muted">'+escapeHtml(new Date(x.updatedAt||Date.now()).toLocaleDateString())+(x.answered?' · ✓ Answered':'')+'</div><p style="white-space:pre-wrap">'+escapeHtml(x.body||'')+'</p><button class="action-btn secondary" onclick="editPrayer('+JSON.stringify(id)+')">Edit</button><button class="action-btn secondary" onclick="deletePrayer('+JSON.stringify(id)+')">Delete</button></article>').join(''):'<div class="empty-state">Your prayer journal is ready when you are.</div>')+'</div>';panel.scrollIntoView({behavior:'smooth',block:'start'})}
+function savePrayer(){const title=(document.getElementById('prayerTitle').value||'').trim(),body=(document.getElementById('prayerBody').value||'').trim();if(!title&&!body){showToast('Write a title or prayer first.', true);return}const all=readStore('rb-prayers'),id='prayer-'+Date.now();all[id]={title:title||'Untitled prayer',body,answered:document.getElementById('prayerAnswered').checked,createdAt:Date.now(),updatedAt:Date.now()};writeStore('rb-prayers',all);showToast('Prayer saved');showPrayerJournal()}
+function editPrayer(id){
+  const all=readStore('rb-prayers'),x=all[id];
+  if(!x)return;
+  const panel=document.getElementById('utilityPanel');
+  panel.classList.remove('hidden');
+  panel.innerHTML='<h2>✏️ Edit prayer</h2>'+
+    '<label class="muted" for="prayerTitle">Title</label>'+
+    '<input id="prayerTitle" maxlength="100" value="'+escapeHtml(x.title||'')+'">'+
+    '<label class="muted" for="prayerBody">Prayer or reflection</label>'+
+    '<textarea id="prayerBody" rows="4" maxlength="5000">'+escapeHtml(x.body||'')+'</textarea>'+
+    '<label><input id="prayerAnswered" type="checkbox" '+(x.answered?'checked':'')+'> Mark as answered prayer</label>'+
+    '<div class="tool-buttons" style="margin-top:10px">'+
+    '<button class="action-btn" onclick="updatePrayer('+JSON.stringify(id)+')">Update prayer</button>'+
+    '<button class="action-btn secondary" onclick="showPrayerJournal()">Cancel</button>'+
+    '</div>';
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function updatePrayer(id){
+  const all=readStore('rb-prayers');
+  const title=(document.getElementById('prayerTitle').value||'').trim();
+  const body=(document.getElementById('prayerBody').value||'').trim();
+  if(!title&&!body){showToast('Write a title or prayer first.', true);return}
+  all[id]={
+    title:title||'Untitled prayer',
+    body,
+    answered:document.getElementById('prayerAnswered').checked,
+    createdAt:all[id]?.createdAt||Date.now(),
+    updatedAt:Date.now()
+  };
+  writeStore('rb-prayers',all);
+  showToast('Prayer updated');
+  showPrayerJournal();
+}
+function deletePrayer(id){
+  const all=readStore('rb-prayers');
+  delete all[id];
+  writeStore('rb-prayers',all);
+  showToast('Prayer entry deleted');
+  showPrayerJournal();
+}
+
+let activeUtterance=null;
+function readCurrentChapter(){if(!books.length)return;const bi=Number(document.getElementById('bookSel').value||0),ch=Number(document.getElementById('chapSel').value||1),book=books[bi];if(!book||!book.c[ch-1])return;const text=book.c[ch-1].map((v,i)=>(i+1)+'. '+v).join(' ');if(!('speechSynthesis' in window)||!('SpeechSynthesisUtterance' in window)){showToast('Read aloud is not supported in this browser.', true);return}stopReadingAloud();activeUtterance=new SpeechSynthesisUtterance(book.n+' chapter '+ch+'. '+text);activeUtterance.rate=0.88;activeUtterance.onend=()=>{activeUtterance=null};speechSynthesis.speak(activeUtterance);const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');panel.innerHTML='<h2>🔊 Reading aloud</h2><p>Now reading '+escapeHtml(book.n+' '+ch)+'.</p><button class="action-btn" onclick="stopReadingAloud()">■ Stop reading</button>';panel.scrollIntoView({behavior:'smooth',block:'start'})}
+function stopReadingAloud(){if('speechSynthesis' in window)speechSynthesis.cancel();activeUtterance=null}
+
+const BACKUP_KEYS=['rb-bookmarks','rb-highlights','rb-notes','rb-visited','rb-reading-days','rb-prayers','rb-study-worksheets','rb-font','rb-dark','rb-plan-0','rb-plan-1','rb-plan-2','twe-pos'];
+function createBackup(){const data={app:'RonaldBible',formatVersion:1,exportedAt:new Date().toISOString(),data:{}};BACKUP_KEYS.forEach(k=>{try{const v=localStorage.getItem(k);if(v!==null)data.data[k]=v}catch(e){}});return JSON.stringify(data,null,2)}
+function showBackup(){stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');panel.innerHTML='<h2>💾 Backup & restore</h2><p class="muted">Back up bookmarks, notes, highlights, prayer journal, guided study notes, reading progress and preferences. Keep this backup private because it may contain personal notes.</p><button class="action-btn" onclick="generateBackup()">Generate backup</button><label class="muted" for="backupText" style="display:block;margin-top:12px">Backup JSON</label><textarea id="backupText" rows="8" placeholder="Tap Generate backup, or paste a previous backup here."></textarea><div class="tool-buttons"><button onclick="copyBackup()">Copy backup text</button><button class="secondary" onclick="restoreBackup()">Restore from pasted backup</button></div><p class="muted">To keep a copy, generate the backup, copy all the text, then save it in a private note or file. Restoring replaces only the listed RonaldBible saved-data keys.</p>';panel.scrollIntoView({behavior:'smooth',block:'start'})}
+function generateBackup(){const t=document.getElementById('backupText');t.value=createBackup();t.focus();t.select();showToast('Backup generated')}
+function copyBackup(){
+  const t=document.getElementById('backupText');
+  if(!t.value)t.value=createBackup();
+  t.focus();
+  t.select();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t.value).then(() => showToast('Backup copied to clipboard!')).catch(() => showToast('Backup text selected. Press Ctrl+C or Copy.'));
+  } else {
+    showToast('Backup text selected. Press Ctrl+C or Copy.');
+  }
+}
+function restoreBackup(){
+  const field=document.getElementById('backupText');
+  let parsed;
+  try{parsed=JSON.parse(field.value)}catch(e){showToast('That is not valid JSON. Paste a backup generated by RonaldBible.', true);return}
+  if(!parsed||parsed.app!=='RonaldBible'||parsed.formatVersion!==1||!parsed.data||typeof parsed.data!=='object'){showToast('This backup is not a supported RonaldBible backup.', true);return}
+  try{
+    BACKUP_KEYS.forEach(k=>{if(Object.prototype.hasOwnProperty.call(parsed.data,k))localStorage.setItem(k,parsed.data[k])});
+    showToast('Backup restored successfully!');
+    setTimeout(() => location.reload(), 1200);
+  }catch(e){showToast('Restore failed: device storage may be full.', true)}
+}
+
+// Version 1.4: cross-references, dictionary and guided study
+const crossReferenceData = {
+  'Genesis 1:1': [['John',1,1],['Psalms',33,6],['Hebrews',11,3]],
+  'Genesis 1:27': [['Genesis',5,2],['Matthew',19,4],['James',3,9]],
+  'Genesis 12:2': [['Genesis',22,18],['Galatians',3,8],['Acts',3,25]],
+  'Exodus 20:3': [['Deuteronomy',5,7],['Matthew',4,10],['1 Corinthians',8,4]],
+  'Psalms 23:1': [['John',10,11],['John',10,14],['Philippians',4,19]],
+  'Psalms 46:1': [['Psalms',91,2],['Isaiah',41,10],['Nahum',1,7]],
+  'Psalms 119:105': [['Proverbs',6,23],['John',8,12],['2 Peter',1,19]],
+  'Proverbs 3:5': [['Psalms',37,5],['Isaiah',26,3],['Jeremiah',17,7]],
+  'Isaiah 9:6': [['Luke',2,11],['John',1,14],['Matthew',1,23]],
+  'Isaiah 40:31': [['Psalms',27,14],['2 Corinthians',4,16],['Philippians',4,13]],
+  'Micah 5:2': [['Matthew',2,5],['John',7,42]],
+  'Matthew 5:14': [['John',8,12],['Ephesians',5,8],['Philippians',2,15]],
+  'Matthew 6:9': [['Luke',11,2],['Romans',8,15],['Galatians',4,6]],
+  'Matthew 6:33': [['Psalms',37,4],['Luke',12,31],['Colossians',3,1]],
+  'Matthew 11:28': [['Psalms',55,22],['John',6,37],['1 Peter',5,7]],
+  'Matthew 22:37': [['Deuteronomy',6,5],['Mark',12,30],['Luke',10,27]],
+  'Luke 2:11': [['Isaiah',9,6],['John',4,42],['Acts',5,31]],
+  'John 1:1': [['Genesis',1,1],['John',1,14],['Colossians',1,16]],
+  'John 3:16': [['Romans',5,8],['1 John',4,9],['Romans',8,32]],
+  'John 8:12': [['Psalms',27,1],['Matthew',5,14],['1 John',1,5]],
+  'John 10:11': [['Psalms',23,1],['Ezekiel',34,11],['Hebrews',13,20]],
+  'John 14:6': [['Acts',4,12],['1 Timothy',2,5],['Hebrews',10,20]],
+  'John 15:5': [['Galatians',5,22],['Philippians',4,13],['Colossians',2,6]],
+  'Acts 1:8': [['Luke',24,49],['Acts',2,4],['Romans',15,19]],
+  'Romans 3:23': [['Romans',3,10],['Romans',6,23],['1 John',1,8]],
+  'Romans 5:8': [['John',3,16],['Ephesians',2,4],['1 Peter',3,18]],
+  'Romans 8:28': [['Genesis',50,20],['Ephesians',1,11],['1 Peter',1,7]],
+  'Romans 12:2': [['Ephesians',4,23],['Colossians',3,10],['1 Peter',1,14]],
+  '1 Corinthians 13:4': [['Proverbs',10,12],['Ephesians',4,2],['1 John',4,7]],
+  '1 Corinthians 10:13': [['Matthew',6,13],['2 Peter',2,9],['Hebrews',2,18]],
+  '2 Corinthians 5:17': [['Galatians',6,15],['Ephesians',4,24],['Colossians',3,10]],
+  'Galatians 5:22': [['John',15,5],['Ephesians',5,9],['Colossians',3,12]],
+  'Ephesians 2:8': [['Romans',3,24],['Titus',3,5],['Romans',11,6]],
+  'Philippians 4:6': [['Psalms',55,22],['Matthew',6,25],['1 Peter',5,7]],
+  'Philippians 4:13': [['John',15,5],['2 Corinthians',12,9],['Isaiah',40,31]],
+  '2 Timothy 3:16': [['2 Peter',1,20],['Romans',15,4],['Psalms',119,105]],
+  'Hebrews 11:1': [['Romans',8,24],['2 Corinthians',5,7],['James',2,17]],
+  'James 1:5': [['Proverbs',2,6],['Matthew',7,7],['1 Kings',3,9]],
+  '1 Peter 5:7': [['Psalms',55,22],['Matthew',6,25],['Philippians',4,6]],
+  '1 John 4:8': [['John',13,34],['Romans',5,8],['1 John',4,16]],
+  'Revelation 21:4': [['Isaiah',25,8],['1 Corinthians',15,26],['Revelation',7,17]]
+};
+
+const bibleDictionary = [
+  ['Abraham','A patriarch whose story emphasizes trust in God and the covenant promise (Genesis 12–25).'],
+  ['Covenant','A solemn relationship or promise established by God. Key examples include God’s promises to Abraham and the new covenant in Christ.'],
+  ['Disciple','A learner or follower. In the Gospels, Jesus’ disciples learn from him and are sent to share his teaching.'],
+  ['Faith','Trust and reliance on God. Hebrews 11 describes faith in relation to hope and confidence in what is not seen.'],
+  ['Grace','God’s undeserved favour and kindness. The New Testament often connects grace with salvation and new life.'],
+  ['Gospel','“Good news”; especially the good news of Jesus Christ, his kingdom, death and resurrection.'],
+  ['Holy Spirit','The Spirit of God, who teaches, empowers, comforts and guides God’s people (John 14–16; Acts 1–2).'],
+  ['Justification','Being declared righteous before God. Paul discusses justification by faith in Romans and Galatians.'],
+  ['Kingdom of God','God’s reign and rule. Jesus teaches about the kingdom through preaching, actions and parables.'],
+  ['Mercy','Compassion shown to someone in need or distress. Scripture repeatedly calls God’s people to practise mercy.'],
+  ['Messiah','The Anointed One; a title Christians use for Jesus as the promised king and deliverer.'],
+  ['Parable','A short story or comparison used to communicate a spiritual or moral truth, often found in Jesus’ teaching.'],
+  ['Redemption','Deliverance or release, often at a cost. The New Testament uses this language for God’s saving work through Christ.'],
+  ['Repentance','A turning from sin toward God, involving a change of mind and direction. See Acts 3:19.'],
+  ['Righteousness','What is right in God’s sight; Scripture discusses God’s righteousness and the righteous life of believers.'],
+  ['Salvation','God’s rescue from sin and its consequences, centred in the biblical story on Jesus Christ.'],
+  ['Sanctification','Being set apart for God and growing in holiness. The New Testament connects it with the work of the Spirit.'],
+  ['Wisdom','The ability to live rightly according to God’s truth. Proverbs and James contain extensive teaching on wisdom.'],
+  ['Worship','Honouring God in reverence, praise, obedience and the offering of one’s life (Romans 12:1).'],
+  ['Apostle','A person sent with a commission. The New Testament especially uses the title for Jesus’ appointed messengers.']
+].sort((a,b)=>a[0].localeCompare(b[0]));
+
+function renderReferenceButton(ref){return '<button class="action-btn secondary" onclick="goToVerse('+JSON.stringify(ref[0])+','+ref[1]+','+ref[2]+')">'+escapeHtml(ref[0]+' '+ref[1]+':'+ref[2])+'</button>'}
+function showCrossReferences(){
+  stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');
+  const options=Object.keys(crossReferenceData).sort();
+  panel.innerHTML='<h2>🔗 Scripture cross-references</h2><p class="muted">Explore related passages. These curated links are a starting point; read each verse in its wider chapter context.</p><label for="xrefSearch">Find a reference</label><input id="xrefSearch" placeholder="e.g. John 3:16 or faith" oninput="filterCrossReferences()"><div id="xrefResults">'+crossReferenceCards(options)+'</div>';
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function crossReferenceCards(keys){return keys.map(key=>{const m=key.match(/^(.*) (\d+):(\d+)$/),ref=[m[1],+m[2],+m[3]],text=verseText(...ref);return '<article class="saved-item"><strong>'+escapeHtml(key)+'</strong><p>'+escapeHtml(text||'Open this passage to read it.')+'</p><div class="tool-buttons">'+renderReferenceButton(ref)+crossReferenceData[key].map(renderReferenceButton).join('')+'</div></article>'}).join('')||'<div class="empty-state">No matching cross-references. Try a Bible reference such as John 3:16.</div>'}
+function filterCrossReferences(){const q=(document.getElementById('xrefSearch').value||'').trim().toLowerCase();const keys=Object.keys(crossReferenceData).filter(k=>{const all=[k,...crossReferenceData[k].map(r=>r.join(' ')),...crossReferenceData[k].map(r=>r[0]+' '+r[1]+':'+r[2])].join(' ').toLowerCase();return all.includes(q)}).sort();document.getElementById('xrefResults').innerHTML=crossReferenceCards(keys)}
+function showBibleDictionary(){
+  stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');
+  panel.innerHTML='<h2>📚 Bible dictionary</h2><p class="muted">Short study definitions to help you read in context. These are introductory summaries, not a substitute for a full Bible dictionary.</p><input id="dictSearch" placeholder="Search a word or topic…" oninput="filterBibleDictionary()"><div id="dictResults">'+dictionaryCards(bibleDictionary)+'</div>';
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function dictionaryCards(items){return items.map(([term,definition])=>'<article class="saved-item"><strong>'+escapeHtml(term)+'</strong><p>'+escapeHtml(definition)+'</p></article>').join('')||'<div class="empty-state">No dictionary entry found. Try another word.</div>'}
+function filterBibleDictionary(){const q=(document.getElementById('dictSearch').value||'').trim().toLowerCase();document.getElementById('dictResults').innerHTML=dictionaryCards(bibleDictionary.filter(([t,d])=>(t+' '+d).toLowerCase().includes(q)))}
+function showStudyGuide(){
+  stopReadingAloud();const panel=document.getElementById('utilityPanel');panel.classList.remove('hidden');
+  const bi=Number(document.getElementById('bookSel').value||0),ch=Number(document.getElementById('chapSel').value||1),book=books[bi];
+  panel.innerHTML='<h2>🧠 Guided Bible study</h2><p class="muted">Use this offline worksheet to study a passage carefully. It helps you observe the text, interpret it in context and apply it thoughtfully.</p><label for="studyReference">Passage</label><input id="studyReference" value="'+escapeHtml(book?book.n+' '+ch:'John 3')+'"><label for="studyObservation">1. Observation — What does the passage say?</label><textarea id="studyObservation" rows="3" placeholder="Repeated words, people, events, commands…"></textarea><label for="studyMeaning">2. Interpretation — What did it mean in context?</label><textarea id="studyMeaning" rows="3" placeholder="Read the surrounding verses and note the main idea…"></textarea><label for="studyApplication">3. Application — What response is appropriate today?</label><textarea id="studyApplication" rows="3" placeholder="A practical response, not just a general idea…"></textarea><label for="studyPrayer">4. Prayer</label><textarea id="studyPrayer" rows="3" placeholder="Respond to God in prayer…"></textarea><button class="action-btn" onclick="saveStudyWorksheet()">Save study notes</button><button class="action-btn secondary" onclick="showSavedStudies()">View saved studies</button><p class="muted">Saved on this device. Export a backup regularly to avoid losing your work.</p>';
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function saveStudyWorksheet(){const reference=(document.getElementById('studyReference').value||'').trim();if(!reference){showToast('Enter the Bible passage first.', true);return}const all=readStore('rb-study-worksheets'),id='study-'+Date.now();all[id]={reference,observation:document.getElementById('studyObservation').value.trim(),meaning:document.getElementById('studyMeaning').value.trim(),application:document.getElementById('studyApplication').value.trim(),prayer:document.getElementById('studyPrayer').value.trim(),updatedAt:Date.now()};writeStore('rb-study-worksheets',all);showToast('Study notes saved on this device.');showSavedStudies()}
+function showSavedStudies(){const panel=document.getElementById('utilityPanel'),all=readStore('rb-study-worksheets');panel.classList.remove('hidden');const entries=Object.entries(all).sort((a,b)=>(b[1].updatedAt||0)-(a[1].updatedAt||0));panel.innerHTML='<h2>🧠 My saved Bible studies</h2>'+(entries.length?entries.map(([id,x])=>'<article class="saved-item"><strong>'+escapeHtml(x.reference)+'</strong><p><b>Observation:</b> '+escapeHtml(x.observation||'—')+'</p><p><b>Interpretation:</b> '+escapeHtml(x.meaning||'—')+'</p><p><b>Application:</b> '+escapeHtml(x.application||'—')+'</p><p><b>Prayer:</b> '+escapeHtml(x.prayer||'—')+'</p><button class="action-btn secondary" onclick="deleteStudyWorksheet('+JSON.stringify(id)+')">Delete</button></article>').join(''):'<div class="empty-state">No saved studies yet. Start a guided study to record your observations.</div>')+'<button class="action-btn secondary" onclick="showStudyGuide()">＋ New study</button>';panel.scrollIntoView({behavior:'smooth',block:'start'})}
+function deleteStudyWorksheet(id){
+  const all=readStore('rb-study-worksheets');
+  delete all[id];
+  writeStore('rb-study-worksheets',all);
+  showToast('Study notes deleted');
+  showSavedStudies();
+}
+
+function initPersonalTools(){try{if(localStorage.getItem('rb-dark')==='1'){document.body.classList.add('dark');document.getElementById('themeBtn').textContent='☀️ Light mode'}const fs=localStorage.getItem('rb-font')||'18';document.getElementById('fontSize').value=fs;setFontSize(fs)}catch(e){}const refs=[];books.forEach(b=>b.c.forEach((vs,ci)=>vs.forEach((text,vi)=>refs.push({book:b.n,ch:ci+1,v:vi+1,text}))));if(refs.length){const day=Math.floor(Date.now()/86400000),x=refs[(day*7919)%refs.length];document.getElementById('dailyText').textContent='“'+x.text+'”';document.getElementById('dailyRef').textContent=x.book+' '+x.ch+':'+x.v}document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchBible()});updateDashboard()}
+
+init().catch(err => {
+  document.getElementById("loading").textContent = "Could not load the Bible text. Check your connection and reload. (" + err + ")";
+});
+</script>
+
+</body>
+</html>
